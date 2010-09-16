@@ -1,8 +1,9 @@
 package curupira1;
 
+import pcs2055.BlockCipher;
 import util.Matrix;
 
-public class Curupira1 implements pcs2055.BlockCipher {
+public class Curupira1 implements BlockCipher {
 	// ----------------------------
 	// local variables
 	// ----------------------------
@@ -100,6 +101,4 @@ public class Curupira1 implements pcs2055.BlockCipher {
 		}
 		return a;
 	}
-	
-	
 }
