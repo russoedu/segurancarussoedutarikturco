@@ -100,4 +100,6 @@ public class Curupira1 implements pcs2055.BlockCipher {
 		}
 		return a;
 	}
+	
+	
 }
