@@ -73,23 +73,20 @@ class Curupira1 implements BlockCipher {
 		// TODO
 	}
 	
+	
 	/**
 	 * The nonlinear layer 'gama'
 	 * gama(a) = b <=> b[i][j] = S[a[i][j]]
-	 * @param byte $u
-	 * @return byte S[$u]
+	 * @param Matrix of byte[][] a
+	 * @return Matrix of byte[][] b
 	 */
-	function S($u) {
-		$uh1 = $this->P [($u >> 4) & 0x0F];
-		$ul1 = $this->Q [$u & 0x0F];
-		
-		$uh2 = $this->Q [($uh1 & 0x0C) ^ (($ul1 >> 0x02) & 0x03)];
-		$ul2 = $this->P [(($uh1 << 0x02) & 0x0C) ^ ($ul1 & 0x03)];
-		
-		$uh1 = $this->P [($uh2 & 0x0C) ^ (($ul2 >> 0x02) & 0x03)];
-		$ul1 = $this->Q [(($uh2 << 0x02) & 0x0C) ^ ($ul2 & 0x03)];
-		
-		return (($uh1 << 0x04) ^ $ul1);
+	function nonLinearGama($matrix){
+		for ($i = 0; $i < count($matrix); $i++){
+			for ($j = 0; $j < count($matrix[$i]); $j++){
+				$matrix[$i][$j] = $this->S($matrix[$i][$j]);
+			}
+		}
+		return matrix;
 	}
 	
 	/**
