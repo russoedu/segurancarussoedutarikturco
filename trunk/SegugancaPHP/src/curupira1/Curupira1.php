@@ -3,6 +3,10 @@ include_once '../pcs2055/BlockCipher.php';
 include_once '../util/Matrix.php';
 
 class Curupira1 implements BlockCipher {
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 * Local vars
+	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
 	/**
 	 * The block bits
 	 * @var int
@@ -37,7 +41,10 @@ class Curupira1 implements BlockCipher {
 	 */
 	private $K;
 	
-
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 * Inherited abstract methods
+	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
 	function blockBits() {
 		return $this->blockBits;
 	}
@@ -46,20 +53,16 @@ class Curupira1 implements BlockCipher {
 		return $this->keyBits;
 	}
 	
-	function K() {
-		return $this->K;
-	}
-	
 	function makeKey($cipherKey, $keyBits) {
 		$this->cipherKey = $cipherKey;
 		$this->keyBits = $keyBits;
 		
 		$t = $keyBits / 48;
 		
-		for($row = 0; $row < 3; $row ++) {
-			for($column = 0; $column < (2 * $t); $column ++) {
-				$auxByteArray = $cipherKey [$row + 3 * $column];
-				$this->K [$row] [$column] = $auxByteArray[0];
+		for($i = 0; $i < 3; $i++) {
+			for($j = 0; $j < (2 * $t); $j++) {
+				$auxByteArray = $cipherKey [$i + 3 * $j];
+				$this->K[$i][$j] = $auxByteArray[0];
 			}
 		}
 	
@@ -73,14 +76,17 @@ class Curupira1 implements BlockCipher {
 		// TODO
 	}
 	
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 * The CURUPIRA-1 round methods
+	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	
 	/**
-	 * The nonlinear layer 'gama'
+	 * The non-linear layer 'gama'
 	 * gama(a) = b <=> b[i][j] = S[a[i][j]]
 	 * @param Matrix of byte[][] a
 	 * @return Matrix of byte[][] b
 	 */
-	function nonLinearGama($matrix){
+	function nonLinearLayerGama($matrix){
 		for ($i = 0; $i < count($matrix); $i++){
 			for ($j = 0; $j < count($matrix[$i]); $j++){
 				$matrix[$i][$j] = $this->S($matrix[$i][$j]);
@@ -95,7 +101,7 @@ class Curupira1 implements BlockCipher {
 	 * @param byte[][] A
 	 * @return byte[][] permuted A
 	 */
-	function permutationPi($matrix) {
+	function permutationLayerPi($matrix) {
 		for($i = 0; $i < count ( $matrix ); $i ++) {
 			$rowCopy = $matrix [$i];
 			for($j = 0; $j < count ( $matrix [$i] ); $j ++) {
@@ -108,10 +114,10 @@ class Curupira1 implements BlockCipher {
 	/**
 	 * The linear diffusion layer 'theta'
 	 * theta(a) = b <=> b = D * a
-	 * @param Matrix a[][]
-	 * @return D*a = b
+	 * @param Matrix of [][]byte a
+	 * @return Matrix of byte[][] b = D*a
 	 */
-	function diffusionTheta($matrix) {
+	function linearDiffusionLayerTheta($matrix) {
 		$D = array (array (0x03, 0x02, 0x02 ), array (0x04, 0x05, 0x04 ), array (0x06, 0x06, 0x07 ) );
 		return Matrix::multiply ( $D, $matrix );
 	}
@@ -119,14 +125,106 @@ class Curupira1 implements BlockCipher {
 	/**
 	 * The key addition 'sigma'[k]
 	 * sigma[k](a) = b <=> b[i][j] = a[i][j] ^ k[i][j]
+	 * @param Matrix of byte[][] k
+	 * @param Matrix of byte[][] a
+	 * @return Matrix of byte[][]
 	 */
-	function additionSigma($k, $a) {
+	function keyAdditionLayerSigma($k, $a) {
 		for($i = 0; $i < count ( $a ); $i ++) {
 			for($j = 0; $j < count ( $a [$i] ); $j ++) {
 				$a [$i] [$j] = $a [$i] [$j] ^ $k [$i] [$j];
 			}
 		}
 		return $a;
+	}
+	
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 * Schedule methods
+	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+/**
+	 * The ciclic shift Csi
+	 * Csi(a) = b <=> 	b[0][j] = a[0][j]
+	 * 					b[1][j] = a[1][(j + 1) mod 2t]
+	 * 					b[2][j] = a[2][(j - 1) mod 2t] 
+	 * @param Matrix of byte[][] a
+	 * @return Matrix of byte[][] b
+	 */
+	function ciclicShiftCsi($a){
+		//i = 0
+		$b = array($a[0]);
+		//i = 1
+		for($j = 0; $j < (count($a) + 1); $j++){
+			$b[1][$j] = $a[1][($j + 1) % (count($a) + 1)];
+		}
+		//i = 2
+		for($j = 0; $j < (count($a) + 1); $j++){
+			if ($j == 0){
+				$b[2][$j] = $a[2][count($a)];
+			}
+			else{
+				$b[2][$j] = $a[2][$j - 1];
+			}
+		}
+		return $b;
+	}
+	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	 * General
+	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+	/**
+	 * The S computing
+	 * Computes S[u] from the mini-boxes P and Q
+	 * @param byte $u
+	 * @return byte S[$u]
+	 */
+	function S($u) {
+		$uh1 = $this->P[($u >> 4) & 0x0F];
+		$ul1 = $this->Q[$u & 0x0F];
+
+		$uh2 = $this->Q[($uh1 & 0x0C) ^ (($ul1 >> 0x02) & 0x03)];
+		$ul2 = $this->P[(($uh1 << 0x02) & 0x0C) ^ ($ul1 & 0x03)];
+
+		$uh1 = $this->P[($uh2 & 0x0C) ^ (($ul2 >> 0x02) & 0x03)];
+		$ul1 = $this->Q[(($uh2 << 0x02) & 0x0C) ^ ($ul2 & 0x03)];
+
+		return (($uh1 << 0x04) ^ $ul1);
+	}
+	
+	/**
+	 * The schedule constants q
+	 * q[i][j](s) = S[2t(s-1) + j]		if i=0
+	 * q[i][j](s) = 0 					otherwise
+	 * @param Matrix of byte[][] s
+	 * @return Matrix of byte[][] q(s)
+	 */
+	function q($s){
+		$t = $this->keyBits / 48;
+		$q = array();
+		//q(0) = 0
+		if($s == 0x00){
+			for ($i = 0; $i < 3; $i++){
+				for ($j = 0; $j < (2 * $t); $j++){
+					$q[$i][$j] = 0x00;
+				}
+			}
+		}
+		else
+		{
+			for ($i = 0; $i < 3; $i++){
+				for ($j = 0; $j < (2 * $t); $j++){
+					//i = 0
+					if($i == 0){
+						$auxByteArray = $this->S((0x02 * $t * ($s - 0x01) + $j));
+						$q[$i][$j] = $auxByteArray;
+					}
+					//otherwise
+					else{
+						$q[$i][$j] = 0x00;
+					}
+				}
+			}
+		}
+		return $q;
 	}
 }
 
@@ -151,10 +249,12 @@ $curupira = new Curupira1 ();
 //Matrix::print_matrix ( $matrix2, "Matrix 2" );
 //Matrix::print_matrix ( $curupira->permutationPi ( $myMatrix ), "minha matriz" );
 
+$myKey = mk_matrix ( 12, 1 );
+$myMatrix = mk_matrix ( 3, 4 );
+$curupira->makeKey ( $myKey, 96 );
 
-$myKey = mk_matrix ( 24, 1 );
-Matrix::print_matrix ( $myKey, "cipherKey" );
-$curupira->makeKey ( $myKey, 192 );
-Matrix::print_matrix ( $curupira->K (), "K" );
+Matrix::print_matrix ( $myMatrix, "matrix" );
+$matrix = $curupira->ciclicShiftCsi($myMatrix);
+Matrix::print_matrix ( $matrix, "matrix" );
 
 ?>
