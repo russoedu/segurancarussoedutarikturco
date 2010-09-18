@@ -239,22 +239,33 @@ function mk_matrix($rows, $cols) {
 	return ($mx);
 }
 
-$curupira = new Curupira1 ();
+function xtimes($x) 
+	{
+		return (($x << 1) ^ ((($x >> 7) & 1) * 0x1b));
+	}
 
-//$matrix1 = array (array (0x01, 0x02, 0x03 ), array (0x04, 0x05, 0x06 ), array (0x07, 0x08, 0x09 ) );
-//$matrix2 = array (array (0x01, 0x02, 0x03, 0x04 ), array (0x05, 0x06, 0x07, 0x08 ), array (0x09, 0x0A, 0x0B, 0x0C ) );
-//$myMatrix = mkmatrix ( 3, 4 );
+$hexa1 = xtimes(0xFF);
+$hexa2 = 0x02;
+
+$hexasum = ($hexa1 + $hexa2)  % 0xFF;
+
+echo $hexa1;
+//$curupira = new Curupira1 ();
 //
-//Matrix::print_matrix ( $myMatrix, "MyMatrix" );
-//Matrix::print_matrix ( $matrix2, "Matrix 2" );
-//Matrix::print_matrix ( $curupira->permutationPi ( $myMatrix ), "minha matriz" );
-
-$myKey = mk_matrix ( 12, 1 );
-$myMatrix = mk_matrix ( 3, 4 );
-$curupira->makeKey ( $myKey, 96 );
-
-Matrix::print_matrix ( $myMatrix, "matrix" );
-$matrix = $curupira->ciclicShiftCsi($myMatrix);
-Matrix::print_matrix ( $matrix, "matrix" );
+////$matrix1 = array (array (0x01, 0x02, 0x03 ), array (0x04, 0x05, 0x06 ), array (0x07, 0x08, 0x09 ) );
+////$matrix2 = array (array (0x01, 0x02, 0x03, 0x04 ), array (0x05, 0x06, 0x07, 0x08 ), array (0x09, 0x0A, 0x0B, 0x0C ) );
+////$myMatrix = mkmatrix ( 3, 4 );
+////
+////Matrix::print_matrix ( $myMatrix, "MyMatrix" );
+////Matrix::print_matrix ( $matrix2, "Matrix 2" );
+////Matrix::print_matrix ( $curupira->permutationPi ( $myMatrix ), "minha matriz" );
+//
+//$myKey = mk_matrix ( 12, 1 );
+//$myMatrix = mk_matrix ( 3, 4 );
+//$curupira->makeKey ( $myKey, 96 );
+//
+//Matrix::print_matrix ( $myMatrix, "matrix" );
+//$matrix = $curupira->ciclicShiftCsi($myMatrix);
+//Matrix::print_matrix ( $matrix, "matrix" );
 
 ?>
