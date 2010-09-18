@@ -20,7 +20,7 @@ class Matrix {
 		for($i = 0; $i < $aRows; $i ++) { // aRow
 			for($j = 0; $j < $bColumns; $j ++) { // bColumn
 				for($k = 0; $k < $aColumns; $k ++) { // aColumn
-					$resultant [$i] [$j] += $a [$i] [$k] * $b [$k] [$j];
+					$resultant [$i] [$j] ^= $a [$i] [$k] * $b [$k] [$j];
 				}
 			}
 		}
