@@ -1,7 +1,6 @@
 package curupira1;
 
 import pcs2055.BlockCipher;
-import util.Matrix;
 
 public class Curupira1 implements BlockCipher {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,18 +50,70 @@ public class Curupira1 implements BlockCipher {
 	public void makeKey(byte[] cipherKey, int keyBits) {
 		this.cipherKey = cipherKey;
 		this.keyBits = keyBits;
-		
-		int t = keyBits / 48;
-		
-		for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < (2 * t); j++) {
-				this.K[i][j] = cipherKey [i + 3 * j];
-			}
-		}
 	}
 
 	public void encrypt(byte[] mBlock, byte[] cBlock) {
-		// TODO
+		// Prepares a matrix for the message block.
+		byte[][] blockMatrix = new byte[3][4];
+		preparePlainTextMatrix(blockMatrix, mBlock);
+		
+		System.out.println("Plaintext");
+		printMatrix(blockMatrix);
+		
+		// Prepares a matrix for the key
+		int t = this.keyBits/48;
+		byte[][] key = new byte[3][2*t];
+		swapKeyRepresentation(key);			
+		
+		System.out.println("Key");
+		printMatrix(key);
+		
+		int nrRounds = 4*t + 2; 
+		
+		// initial key addition (whitening)
+		constantAdditionLayerSigma(key, 0);
+		cyclicShiftLayerCsi(key);
+		printMatrix(key);
+		linearDiffusionLayerMi(key, false);
+		printMatrix(key);
+		linearDiffusionLayerMi(key, false);
+		printMatrix(key);
+		
+		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+		
+		System.out.println("First add round key addition");
+		printMatrix(blockMatrix);
+		
+		// round function
+		for (int round = 1; round < nrRounds - 1; round ++) 
+		{
+			// Key Evolution
+			constantAdditionLayerSigma(key, round);
+			cyclicShiftLayerCsi(key);
+			linearDiffusionLayerMi(key, false);
+			
+			// round cipher
+			nonLinearLayerGama(blockMatrix);
+			permutationLayerPi(blockMatrix);
+			linearDiffusionLayerTheta(blockMatrix);
+			keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+			
+			System.out.println("Round " + round);
+			printMatrix(blockMatrix);
+		}
+		
+		// last round function
+		constantAdditionLayerSigma(key, nrRounds - 1);
+		cyclicShiftLayerCsi(key);
+		linearDiffusionLayerMi(key, false);
+		nonLinearLayerGama(blockMatrix);
+		permutationLayerPi(blockMatrix);
+		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+				
+		// End
+		prepareCipherTextBlock(cBlock, blockMatrix);
+		printMatrix(blockMatrix);
+		printVector(cBlock);
 	}
 
 	public void decrypt(byte[] cBlock, byte[] mBlock) {
@@ -76,94 +127,175 @@ public class Curupira1 implements BlockCipher {
 	/**
 	 * The non-linear layer 'gama'
 	 * gama(a) = b <=> b[i][j] = S[a[i][j]]
-	 * @param Matrix of byte[][] a
-	 * @return Matrix of byte[][] b
+	 * @param Matrix of byte[][]
 	 */
-	public byte[][] nonLinearLayerGama (byte[][] matrix){
+	public void nonLinearLayerGama (byte[][] matrix){
 		for (int i = 0; i < matrix.length; i++){
 			for (int j = 0; j < matrix[i].length; j++){
 				matrix[i][j] = this.S(matrix[i][j]);
 			}
 		}
-		return matrix;
 	}
 	
 	/**
 	 * The permutation layer 'pi'
 	 * pi(a) = b <=> b[i][j] = a[i][i ^ j]
-	 * @param Matrix of byte[][] A
-	 * @return Matrix of byte[][] permuted A
+	 * @param Matrix of byte[][]
 	 */
-	public byte[][] permutationLayerPi(byte[][] matrix) {
+	public void permutationLayerPi(byte[][] matrix) {
 		for (int i = 0; i < matrix.length; i++) {
 			byte[] rowCopy = matrix[i];
 			for (int j = 0; j < matrix[i].length; j++) {
 				matrix[i][j] = rowCopy[i ^ j];
 			}
 		}
-		return matrix;
 	}
 
 	/**
 	 * The linear diffusion layer 'theta'
 	 * theta(a) = b <=> b = D * a
-	 * @param Matrix of [][]byte a
-	 * @return Matrix of byte[][] b = D*a
+	 * Calculated using Algorithm 2
+	 * @param Matrix of [][]byte
 	 */
-	public byte[][] linearDiffusionLayerTheta(byte[][] a) {
-		byte[][] D = { { 0x03, 0x02, 0x02 }, { 0x04, 0x05, 0x04 }, { 0x06, 0x06, 0x07 } };
-		return Matrix.multiply(D, a);
+	public void linearDiffusionLayerTheta(byte[][] matrix) {
+		byte v;
+		byte w;
+		for(int j = 0; j < matrix[0].length; j++){
+			v = xTimes((byte)(matrix[0][j] ^ matrix[1][j] ^ matrix[2][j]));
+			w = xTimes(v);
+			
+			matrix[0][j] = (byte)(matrix[0][j] ^ v); 
+			matrix[1][j] = (byte)(matrix[1][j] ^ w);
+			matrix[2][j] = (byte)(matrix[2][j] ^ v ^ w);
+		}
 	}
 
 	/**
-	 * The key addition 'sigma'[k]
+	 * The key addition layer 'sigma'[k]
 	 * sigma[k](a) = b <=> b[i][j] = a[i][j] ^ k[i][j]
 	 * @param Matrix of byte[][] k
 	 * @param Matrix of byte[][] a
-	 * @return Matrix of byte[][]
+	 * @return Matrix of byte[][] b
 	 */
-	public byte[][] keyAdditionLayerSigma(byte[][] k, byte[][] a) {
-		for (int i = 0; i < a.length; i++) {
-			for (int j = 0; j < a[i].length; j++) {
-				a[i][j] = (byte) (a[i][j] ^ k[i][j]);
+	public void keyAdditionLayerSigma(byte[][] matrix, byte[][] k) {
+		for (int i = 0; i < matrix.length; i++) {
+			for (int j = 0; j < matrix[i].length; j++) {
+				matrix[i][j] = (byte) (matrix[i][j] ^ k[i][j]);
 			}
 		}
-		return a;
 	}
 	
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * Schedule methods
 	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	/**
-	 * The ciclic shift Csi
+	 * The constant addition layer 'sigma'
+	 * @param Matrix of byte[][]
+	 * @param Byte round
+	 */
+	public void constantAdditionLayerSigma(byte[][] matrix, int round){
+		byte q[][] = q(round);
+		
+		for (int i = 0; i < matrix.length; i++)
+			for (int j = 0; j < matrix[i].length; j++)
+				matrix[i][j] = (byte)(matrix[i][j] ^ q[i][j]);
+	}
+
+	/**
+	 * The cyclic shift layer 'csi'
 	 * Csi(a) = b <=> 	b[0][j] = a[0][j]
 	 * 					b[1][j] = a[1][(j + 1) mod 2t]
 	 * 					b[2][j] = a[2][(j - 1) mod 2t] 
 	 * @param Matrix of byte[][] a
 	 * @return Matrix of byte[][] b
 	 */
-	public byte[][] ciclicShiftCsi(byte[][] a){
-		byte[][] b = new byte[3][a.length +1];
+	public void cyclicShiftLayerCsi(byte[][] matrix){
 		//i = 0
-		b[0] = a[0];
+		matrix[0] = matrix[0];
 		//i = 1
-		for(int j = 0; j < (a.length + 1); j++){
-			b[1][j] = a[1][(j + 1) % (a.length + 1)];
+		for(int j = 0; j < (matrix.length + 1); j++){
+			matrix[1][j] = matrix[1][(j + 1) % (matrix.length + 1)];
 		}
 		//i = 2
-		for(int j = 0; j < (a.length + 1); j++){
+		for(int j = 0; j < (matrix.length + 1); j++){
 			if (j == 0){
-				b[2][j] = a[2][a.length];
+				matrix[2][j] = matrix[2][matrix.length];
 			}
 			else{
-				b[2][j] = a[2][j - 1];
+				matrix[2][j] = matrix[2][j - 1];
 			}
 		}
-		return b;
 	}
+	
+	/**
+	 * The linear diffusion layer 'mi'
+	 * mi(a) = E * a, where E = I + c * C
+	 * Calculated using Algorithm 3
+	 * @param Matrix of byte[][]
+	 * @param Boolean invert [select E (false) or E^-1 (true)]
+	 * @return Matrix of byte[][] b = E * a 
+	 */
+	public void linearDiffusionLayerMi(byte[][] matrix, boolean invert){
+		byte v;
+		for(int j = 0; j < matrix[0].length; j++){
+			v = (byte)(matrix[0][j] ^ matrix[1][j] ^ matrix[2][j]);
+			
+			if (invert) {
+				v = (byte)(cTimes(v) ^ v);
+			}
+			else{
+				v = cTimes(v);
+			}
+			
+			matrix[0][j] = (byte)(matrix[0][j] ^ v); 
+			matrix[1][j] = (byte)(matrix[1][j] ^ v);
+			matrix[2][j] = (byte)(matrix[2][j] ^ v);
+		}
+	}
+	
+	/**
+	 * The key selection 'phi'
+	 * k(r) = phi[r](K) <=> k[0][j](r) = S[K[0][j](r)] and k[i][j](r) = K[i][j](r) for i > 0 and 0 <= j < 4.
+	 * @param Matrix of byte[][] K
+	 * @return the truncated cipher key matrix
+	 */
+	public byte[][] keySelectionPhi(byte[][] K){ 
+		byte[][] k = new byte[3][4];
+		for(int i = 0; i < K.length; i ++){
+			for (int j = 0; j < K[i].length; j++){
+				if(i == 0){
+					k[i][j] = S(K[0][j]);
+				}
+				else{
+					k[i][j] = K[i][j];
+				}
+			}
+		}
+		return k;
+	}
+
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * General
 	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+	
+	/**
+	 * xTimes
+	 * @param byte b
+	 * @return xTimes(b)
+	 */
+	private byte xTimes(byte b){
+		return (byte)((b << 1) ^ (((b >> 7) & 1) * 0x1B));
+	}
+	
+	/**
+	 * cTimes
+	 * @param bytex
+	 * @return cTimes(b)
+	 */
+	private byte cTimes(byte b){		
+		return (byte)xTimes(xTimes((byte)(xTimes((byte)(xTimes(b) ^ b)) ^ b)));
+	}
+
 	
 	/**
 	 * The S computing
@@ -192,7 +324,7 @@ public class Curupira1 implements BlockCipher {
 	 * @param Matrix of byte[][] s
 	 * @return Matrix of byte[][] q(s)
 	 */
-	public byte[][] q(byte s){
+	public byte[][] q(int s){
 		int t = keyBits / 48;
 		byte[][] q = new byte[3][2*t];
 		
@@ -222,4 +354,93 @@ public class Curupira1 implements BlockCipher {
 		return q;
 	}
 	
+	/**
+	 * Alter the cipher key to it's internal representation as M2t matrix
+	 */
+	public void swapKeyRepresentation(byte[][] matrix){
+		int t = this.keyBits / 48;
+		for(int i = 0; i < 3; i++) {
+			for(int j = 0; j < (2 * t); j++) {
+				matrix[i][j] = this.cipherKey [i + 3 * j];
+			}
+		}
+	}
+	
+	/**
+	 * Transposes the 96-bits plain text message block into a M4 matrix.
+	 * @param mMatrix the matrix to be filled.
+	 * @param mBlock the message block to transposed.
+	 */
+	private void preparePlainTextMatrix(byte[][] mMatrix, byte[] mBlock) 
+	{
+		
+		mMatrix[0][0] = mBlock[0];
+		mMatrix[0][1] = mBlock[1];
+		mMatrix[0][2] = mBlock[2];
+		mMatrix[0][3] = mBlock[3];
+		mMatrix[1][0] = mBlock[4];
+		mMatrix[1][1] = mBlock[5];
+		mMatrix[1][2] = mBlock[6];
+		mMatrix[1][3] = mBlock[7];
+		mMatrix[2][0] = mBlock[8];
+		mMatrix[2][1] = mBlock[9];
+		mMatrix[2][2] = mBlock[10];
+		mMatrix[2][3] = mBlock[11];
+		
+		/*		
+		mMatrix[0][0] = mBlock[0];
+		mMatrix[1][0] = mBlock[1];
+		mMatrix[2][0] = mBlock[2];
+		mMatrix[0][1] = mBlock[3];
+		mMatrix[1][1] = mBlock[4];
+		mMatrix[2][1] = mBlock[5];
+		mMatrix[0][2] = mBlock[6];
+		mMatrix[1][2] = mBlock[7];
+		mMatrix[2][2] = mBlock[8];
+		mMatrix[0][3] = mBlock[9];
+		mMatrix[1][3] = mBlock[10];
+		mMatrix[2][3] = mBlock[11];
+		*/
+	}
+	/**
+	 * Transposes the cipher text M4 matrix into a cipher message.
+	 * @param cBlock the cipher message to be filled.
+	 * @param cMatrix the cipher matrix to be transposed.
+	 */
+	private void prepareCipherTextBlock(byte[] cBlock, byte[][] cMatrix) 
+	{
+		cBlock[0] = cMatrix[0][0];
+		cBlock[1] = cMatrix[0][1];
+		cBlock[2] = cMatrix[0][2];
+		cBlock[3] = cMatrix[0][3];
+		cBlock[4] = cMatrix[1][0];
+		cBlock[5] = cMatrix[1][1];
+		cBlock[6] = cMatrix[1][2];
+		cBlock[7] = cMatrix[1][3];
+		cBlock[8] = cMatrix[2][0];
+		cBlock[9] = cMatrix[2][1];
+		cBlock[10] = cMatrix[2][2];
+		cBlock[11] = cMatrix[2][3];		
+	}
+	
+	
+	public static void printVector(byte[] A)
+	{
+		for (int i = 0; i < A.length; i++) 
+            System.out.printf("%3s ", byteToHex(A[i]));		
+		System.out.println();
+	}
+	
+	public static void printMatrix(byte[][] A)
+	{
+		for (int i = 0; i < A.length; i++) 
+			printVector(A[i]);
+		System.out.println();
+	}
+	
+	public static String byteToHex(byte b)
+	{
+		return Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 );
+	}
+
 }
