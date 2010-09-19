@@ -37,20 +37,20 @@ public class Curupira1 implements BlockCipher {
 	}
 
 	public void encrypt(byte[] mBlock, byte[] cBlock) {
-		// Prepares a matrix for the message block.
-		byte[][] blockMatrix = new byte[3][4];
-		blockToMatrix(mBlock, blockMatrix, false);
-		
-		printMatrix("PlainText Matrix", blockMatrix);
-		
-		// Prepares a matrix for the key
+		// Cipher Key
+		printVector("cipherKey", cipherKey);
 		int t = this.keyBits/48;
 		byte[][] key = new byte[3][2*t];
-		blockToMatrix(this.cipherKey, key, true);			
-		
+		blockToMatrix(this.cipherKey, key, true);
 		printMatrix("Cipher Key Matrix", key);
+
+		// Plain text
+		printVector("plainText", mBlock);
+		byte[][] plainTextMatrix = new byte[3][4];
+		blockToMatrix(mBlock, plainTextMatrix, false);
+		printMatrix("PlainText Matrix", plainTextMatrix);
 		
-		int nrRounds = 4*t + 2; 
+		int nrRounds = 4 * t + 2; 
 		
 		// initial key addition (whitening)
 		constantAdditionLayerSigma(key, 0);
@@ -61,12 +61,12 @@ public class Curupira1 implements BlockCipher {
 		linearDiffusionLayerMi(key, false);
 		printMatrix("Linear diffusion", key);
 		
-		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+		keyAdditionLayerSigma(plainTextMatrix, keySelectionPhi(key));
 
-		printMatrix("First add round key addition", blockMatrix);
+		printMatrix("-- 1st add round key", plainTextMatrix);
 		
 		// round function
-		for (int round = 1; round < nrRounds - 1; round ++) 
+		for (int round = 1; round < nrRounds; round ++) 
 		{
 			// Key Evolution
 			constantAdditionLayerSigma(key, round);
@@ -74,25 +74,25 @@ public class Curupira1 implements BlockCipher {
 			linearDiffusionLayerMi(key, false);
 			
 			// round cipher
-			nonLinearLayerGama(blockMatrix);
-			permutationLayerPi(blockMatrix);
-			linearDiffusionLayerTheta(blockMatrix);
-			keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+			nonLinearLayerGama(plainTextMatrix);
+			permutationLayerPi(plainTextMatrix);
+			linearDiffusionLayerTheta(plainTextMatrix);
+			keyAdditionLayerSigma(plainTextMatrix, keySelectionPhi(key));
 			
-			printMatrix("Round " + round, blockMatrix);
+			printMatrix("Round " + round, plainTextMatrix);
 		}
 		
 		// last round function
 		constantAdditionLayerSigma(key, nrRounds - 1);
 		cyclicShiftLayerCsi(key);
 		linearDiffusionLayerMi(key, false);
-		nonLinearLayerGama(blockMatrix);
-		permutationLayerPi(blockMatrix);
-		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+		nonLinearLayerGama(plainTextMatrix);
+		permutationLayerPi(plainTextMatrix);
+		keyAdditionLayerSigma(plainTextMatrix, keySelectionPhi(key));
 				
 		// End
-		matrixToBlock(cBlock, blockMatrix);
-		printMatrix("End", blockMatrix);
+		matrixToBlock(cBlock, plainTextMatrix);
+		printMatrix("End", plainTextMatrix);
 		printVector(cBlock);
 	}
 
@@ -374,9 +374,17 @@ public class Curupira1 implements BlockCipher {
 	}
 	
 	
+	public static void printVector(String name, byte[] A){
+		System.out.printf(name + ": ");
+		for (int i = 0; i < A.length; i++){ 
+            System.out.printf("%2s ", byteToHex(A[i]));
+		}
+		System.out.println();
+	}
+	
 	public static void printVector(byte[] A){
 		for (int i = 0; i < A.length; i++){ 
-            System.out.printf("%3s ", byteToHex(A[i]));
+            System.out.printf("%2s ", byteToHex(A[i]));
 		}
 		System.out.println();
 	}
@@ -393,4 +401,10 @@ public class Curupira1 implements BlockCipher {
 		return Integer.toString((b & 0xFF) + 0x100, 16).substring(1);
 	}
 
+	public static String byteToHex(byte[] b){
+		String result = "";
+		for (int i = 0; i < b.length; i++)
+			result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+		return result;
+	}
 }
