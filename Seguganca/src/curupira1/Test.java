@@ -26,7 +26,7 @@ public class Test {
 		
 //		byte[][] teste = new byte[3][4];
 //		c.blockToMatrix(cipherKey, teste, false);
-//		c.cyclicShiftLayerCsi(teste);
+//		c.permutationLayerPi(teste);
 //		Curupira1.printMatrix("teste", teste);
 		
 		c.makeKey(cipherKey, cipherKey.length * 8);

@@ -107,31 +107,19 @@ public class Curupira1 implements BlockCipher {
 	 * @param textMatrix Matrix of byte
 	 */
 	public void permutationLayerPi(byte[][] textMatrix) {
-//		for (int i = 0; i < matrix.length; i++) {
-//			byte[] rowCopy = matrix[i];
-//			for (int j = 0; j < matrix[i].length; j++) {
-//				matrix[i][j] = rowCopy[i ^ j];
-//			}
-//		}
-		
-		//mf
-		byte aux;
-		
-		aux = textMatrix[1][0]; 
-		textMatrix[1][0] = textMatrix[1][1];
-		textMatrix[1][1] = aux;
-		
-		aux = textMatrix[1][2];
-		textMatrix[1][2] = textMatrix[1][3];
-		textMatrix[1][3] = aux;
-		
-		aux = textMatrix[2][0];
-		textMatrix[2][0] = textMatrix[2][2];
-		textMatrix[2][2] = aux;
-		
-		aux = textMatrix[2][1];
-		textMatrix[2][1] = textMatrix[2][3];
-		textMatrix[2][3] = aux;	
+		for (int i = 1; i < 3; i++) {
+			
+			//Copy the row
+			byte[] rowCopy = new byte[4];
+			for(int k = 0; k < 4; k++){
+				rowCopy[k] = textMatrix[i][k];
+			}
+			
+			// swap the values
+			for (int j = 0; j < 4; j++) {
+					textMatrix[i][j] = rowCopy[(i ^ j)];
+			}
+		}
 	}
 
 	/**
