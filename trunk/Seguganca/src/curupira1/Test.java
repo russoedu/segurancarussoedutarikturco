@@ -36,11 +36,16 @@ public class Test {
 //								(byte) 0x04, (byte) 0x05, (byte) 0x06,
 //								(byte) 0x07, (byte) 0x08, (byte) 0x09,
 //								(byte) 0x0A, (byte) 0x0B, (byte) 0x0C};
+//		byte[] plainText = { 	(byte) 0x01, (byte) 0x02, (byte) 0x03,
+//								(byte) 0x04, (byte) 0x05, (byte) 0x06,
+//								(byte) 0x07, (byte) 0x08, (byte) 0x09,
+//								(byte) 0x0A, (byte) 0x0B, (byte) 0x0C};
+
 		byte[] cipherKey = { 	(byte) 0x00, (byte) 0x00, (byte) 0x00,
 								(byte) 0x00, (byte) 0x00, (byte) 0x00,
 								(byte) 0x00, (byte) 0x00, (byte) 0x00,
 								(byte) 0x00, (byte) 0x00, (byte) 0x00};
-		
+				
 		byte[] plainText = { 	(byte) 0x00, (byte) 0x00, (byte) 0x00,
 								(byte) 0x00, (byte) 0x00, (byte) 0x00,
 								(byte) 0x00, (byte) 0x00, (byte) 0x00,
@@ -48,12 +53,9 @@ public class Test {
 
 		byte[] cipherText = new byte[plainText.length];
 
-		System.out.printf("cipherKey  = %s\n", byteToHex(cipherKey));
-		System.out.printf("plainText  = %s\n", byteToHex(plainText));
 		Curupira1 c = new Curupira1();
 		c.makeKey(cipherKey, cipherKey.length * 8);
 		c.encrypt(plainText, cipherText);
-		System.out.printf("ciphertext = %s\n\n", byteToHex(cipherText));
 
 		/*
 		 * // S-Box // comparação com a tabela completa
@@ -76,28 +78,5 @@ public class Test {
 		 * c.lineardiffusionTheta(A); printMatrix(A); c.lineardiffusionTheta(A);
 		 * printMatrix(A);
 		 */
-	}
-
-	public static void printVector(byte[] A){
-		for (int i = 0; i < A.length; i++)
-			System.out.printf("%3s ", byteToHex(A[i]));
-		System.out.println();
-	}
-
-	public static void printMatrix(byte[][] A){
-		for (int i = 0; i < A.length; i++)
-			printVector(A[i]);
-		System.out.println();
-	}
-
-	public static String byteToHex(byte b){
-		return Integer.toString((b & 0xff) + 0x100, 16).substring(1);
-	}
-
-	public static String byteToHex(byte[] b){
-		String result = "";
-		for (int i = 0; i < b.length; i++)
-			result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1) + " ";
-		return result;
 	}
 }
