@@ -1,7 +1,7 @@
 package curupira1;
 
 import pcs2055.BlockCipher;
-import util.Conversor;
+import util.Util;
 import util.Printer;
 
 public class Curupira1 implements BlockCipher {
@@ -41,7 +41,7 @@ public class Curupira1 implements BlockCipher {
 	public void encrypt(byte[] mBlock, byte[] cBlock) {				
 		// Plain text to matrix
 		byte[][] blockMatrix = new byte[3][4];
-		Conversor.blockToMatrix(mBlock, blockMatrix, true);
+		Util.blockToMatrix(mBlock, blockMatrix, true);
 		
 		if(stepByStepDebug){
 			Printer.printMatrix("------- Plaintext -------", blockMatrix);
@@ -71,7 +71,7 @@ public class Curupira1 implements BlockCipher {
 			Printer.printMatrix("--- Ciphertext ---", blockMatrix);
 		}
 		
-		Conversor.matrixToBlock(cBlock, blockMatrix, true);
+		Util.matrixToBlock(cBlock, blockMatrix, true);
 		if(finalAnswerDebug){
 			Printer.printVectorAsPlainText("generated cipher", cBlock);
 		}
@@ -80,7 +80,7 @@ public class Curupira1 implements BlockCipher {
 	public void decrypt(byte[] cBlock, byte[] mBlock) {
 		// Plain text to matrix
 		byte[][] cipherMatrix = new byte[3][4];
-		Conversor.blockToMatrix(cBlock, cipherMatrix, true);
+		Util.blockToMatrix(cBlock, cipherMatrix, true);
 		
 		//Initial key addition
 		keyAdditionLayerSigma(cipherMatrix, keySelectionPhi(keyEvolution[numberOfRounds]));
@@ -108,7 +108,7 @@ public class Curupira1 implements BlockCipher {
 		}
 		
 //		byte[] blockReturn = new byte[cipherMatrix[0].length * 3];
-		Conversor.matrixToBlock(mBlock, cipherMatrix, true);
+		Util.matrixToBlock(mBlock, cipherMatrix, true);
 		if(finalAnswerDebug){
 			Printer.printVectorAsPlainText("recovered plain ", mBlock);
 		}
@@ -160,7 +160,7 @@ public class Curupira1 implements BlockCipher {
 	 */
 	public void permutationLayerPi(byte[][] textMatrix) {
 		byte[][] matrixCopy = new byte[textMatrix.length][textMatrix[0].length];
-		Conversor.copyMatrix(textMatrix, matrixCopy);
+		Util.copyMatrix(textMatrix, matrixCopy);
 		for (int i = 1; i < 3; i++) {
 			for (int j = 0; j < 4; j++) {
 					textMatrix[i][j] = matrixCopy[i][(i ^ j)];
@@ -225,15 +225,15 @@ public class Curupira1 implements BlockCipher {
 	 */
 	private void evolveKey(){
 		keyEvolution = new byte[numberOfRounds + 1][3][2 * t];
-		Conversor.blockToMatrix(cipherKey, keyEvolution[0], true);
+		Util.blockToMatrix(cipherKey, keyEvolution[0], true);
 	
-		Conversor.copyMatrix(keyEvolution[0], keyEvolution[1]);
+		Util.copyMatrix(keyEvolution[0], keyEvolution[1]);
 		for (int i = 1; i <= numberOfRounds; i++)
 		{
 			keyEvolutionPsi(keyEvolution[i], i, false);
 			
 			if (i != numberOfRounds){
-				Conversor.copyMatrix(keyEvolution[i], keyEvolution[i+1]);
+				Util.copyMatrix(keyEvolution[i], keyEvolution[i+1]);
 			}
 		}	
 	}

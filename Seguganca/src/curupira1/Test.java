@@ -1,6 +1,6 @@
 package curupira1;
 
-import util.Conversor;
+import util.Util;
 import util.Printer;
 
 public class Test {
@@ -10,9 +10,9 @@ public class Test {
 		String plain = "000000000000000000000000";
 		String cipher = "b48cbb9149131c39995ffb3a";
 		
-		byte[] cipherKey = Conversor.convertStringToVector(key);
-		byte[] plainText = Conversor.convertStringToVector(plain);
-		byte[] cipherText = Conversor.convertStringToVector(cipher);
+		byte[] cipherKey = Util.convertStringToVector(key);
+		byte[] plainText = Util.convertStringToVector(plain);
+		byte[] cipherText = Util.convertStringToVector(cipher);
 		Printer.printVectorAsPlainText("original plain  ", plainText);
 		
 		Curupira1 c = new Curupira1();
