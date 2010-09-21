@@ -1,7 +1,7 @@
 package curupira1;
 
 import pcs2055.BlockCipher;
-import util.Conversor;
+import util.Util;
 import util.Printer;
 
 public class Curupira1 implements BlockCipher {
@@ -13,7 +13,9 @@ public class Curupira1 implements BlockCipher {
 	private byte[] cipherKey;
 	private int t;
 	private int numberOfRounds;
-	private boolean debug = false;
+	private byte keyEvolution[][][];
+	private boolean stepByStepDebug = true;
+	private boolean finalAnswerDebug = true;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * Inherited abstract methods
@@ -31,56 +33,85 @@ public class Curupira1 implements BlockCipher {
 		this.cipherKey = cipherKey;
 		this.keyBits = keyBits;
 		this.t = keyBits/48;
-		this.numberOfRounds = 4 * t + 2;	
+		this.numberOfRounds = 4 * t + 2;
+	
+		evolveKey();	
 	}
 
 	public void encrypt(byte[] mBlock, byte[] cBlock) {				
 		// Plain text to matrix
 		byte[][] blockMatrix = new byte[3][4];
-		Conversor.blockToMatrix(mBlock, blockMatrix, true);
-		if(debug)
+		Util.blockToMatrix(mBlock, blockMatrix, true);
+		
+		if(stepByStepDebug){
 			Printer.printMatrix("------- Plaintext -------", blockMatrix);
-		
-		// Cipher key to matrix
-		byte[][] key = new byte[3][2 * t];
-		Conversor.blockToMatrix(this.cipherKey, key, true);
-		if(debug)
-			Printer.printMatrix("------- Key -------", key);
-		
+		}
 		//Initial key addition
-		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(keyEvolution[0]));
 		
-		if(debug)
+		if(stepByStepDebug){
+			Printer.printMatrix("------- Key -------", keyEvolution[0]);
 			Printer.printMatrix("****** Encryption ******\n-- 1st add round key", blockMatrix);
-		// round functions
-		for (int round = 1; round < numberOfRounds; round ++){
-			// Key evolution 'psi
-			keyEvolutionPsi(key, round, false);
+		}
 
-			// round function
-			roundFunctions(blockMatrix, key);
+
+		for (int round = 1; round < numberOfRounds; round ++){
+			roundFunctions(blockMatrix, keyEvolution[round], true);
 			
-			if(debug)
+			if(stepByStepDebug){
 				Printer.printMatrix("--- Round " + round + " ---", blockMatrix);
+			}
 		}
 		//last round function
 		nonLinearLayerGama(blockMatrix);
 		permutationLayerPi(blockMatrix);
+		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(keyEvolution[numberOfRounds]));
 		
-		keyEvolutionPsi(key, numberOfRounds, false);
-		
-		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
-		
-		if(debug)
+		if(stepByStepDebug){
 			Printer.printMatrix("--- Ciphertext ---", blockMatrix);
+		}
 		
-		byte[] blockReturn = new byte[blockMatrix[0].length * 3];
-		Conversor.matrixToBlock(blockReturn, blockMatrix, true);
-		Printer.printVector("nosso  ", blockReturn);
+		Util.matrixToBlock(cBlock, blockMatrix, true);
+		if(finalAnswerDebug){
+			Printer.printVectorAsPlainText("generated cipher", cBlock);
+		}
 	}
 
 	public void decrypt(byte[] cBlock, byte[] mBlock) {
-		// TODO
+		// Plain text to matrix
+		byte[][] cipherMatrix = new byte[3][4];
+		Util.blockToMatrix(cBlock, cipherMatrix, true);
+		
+		//Initial key addition
+		keyAdditionLayerSigma(cipherMatrix, keySelectionPhi(keyEvolution[numberOfRounds]));
+		
+		nonLinearLayerGama(cipherMatrix);
+		permutationLayerPi(cipherMatrix);
+		
+		if(stepByStepDebug){
+			Printer.printMatrix("****** Decryption ******\n-- 1st add round key", cipherMatrix);
+		}
+
+
+		for (int round = numberOfRounds - 1; round >= 1; round --){
+			roundFunctions(cipherMatrix, keyEvolution[round], false);
+			
+			if(stepByStepDebug){
+				Printer.printMatrix("--- Round " + round + " ---", cipherMatrix);
+			}
+		}
+		//last round function
+		keyAdditionLayerSigma(cipherMatrix, keySelectionPhi(keyEvolution[0]));
+		
+		if(stepByStepDebug){
+			Printer.printMatrix("--- Plain ---", cipherMatrix);
+		}
+		
+//		byte[] blockReturn = new byte[cipherMatrix[0].length * 3];
+		Util.matrixToBlock(mBlock, cipherMatrix, true);
+		if(finalAnswerDebug){
+			Printer.printVectorAsPlainText("recovered plain ", mBlock);
+		}
 	}
 	
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,15 +119,25 @@ public class Curupira1 implements BlockCipher {
 	 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 	/**
 	 * The round functions<br/>
-	 * Executes 'gama', 'pi', 'theta' and 'sigma' in sequence
+	 * Executes 'gama', 'pi', 'theta' and 'sigma' in sequence (encrypt = true)<br/>
+	 * or<br/>
+	 * Executes 'sigma', 'theta', 'pi' and 'gama' in sequence (encrypt = false)
 	 * @param textMatrix Matrix of byte
 	 * @param key Matrix of byte 
 	 */
-	private void roundFunctions(byte[][] textMatrix, byte[][] key){
-		nonLinearLayerGama(textMatrix);
-		permutationLayerPi(textMatrix);
-		linearDiffusionLayerTheta(textMatrix);
-		keyAdditionLayerSigma(textMatrix, keySelectionPhi(key));
+	private void roundFunctions(byte[][] textMatrix, byte[][] key, boolean encrypt){
+		if(encrypt){
+			nonLinearLayerGama(textMatrix);
+			permutationLayerPi(textMatrix);
+			linearDiffusionLayerTheta(textMatrix);
+			keyAdditionLayerSigma(textMatrix, keySelectionPhi(key));
+		}
+		else{
+			keyAdditionLayerSigma(textMatrix, keySelectionPhi(key));
+			linearDiffusionLayerTheta(textMatrix);
+			permutationLayerPi(textMatrix);
+			nonLinearLayerGama(textMatrix);
+		}
 	}
 	
 	/**
@@ -118,17 +159,11 @@ public class Curupira1 implements BlockCipher {
 	 * @param textMatrix Matrix of byte
 	 */
 	public void permutationLayerPi(byte[][] textMatrix) {
+		byte[][] matrixCopy = new byte[textMatrix.length][textMatrix[0].length];
+		Util.copyMatrix(textMatrix, matrixCopy);
 		for (int i = 1; i < 3; i++) {
-			
-			//Copy the row
-			byte[] rowCopy = new byte[4];
-			for(int k = 0; k < 4; k++){
-				rowCopy[k] = textMatrix[i][k];
-			}
-			
-			// swap the values
 			for (int j = 0; j < 4; j++) {
-					textMatrix[i][j] = rowCopy[(i ^ j)];
+					textMatrix[i][j] = matrixCopy[i][(i ^ j)];
 			}
 		}
 	}
@@ -182,6 +217,25 @@ public class Curupira1 implements BlockCipher {
 		constantAdditionLayerSigma(key, round);
 		cyclicShiftLayerCsi(key);
 		linearDiffusionLayerMi(key, invert);
+	}
+	
+	/**
+	 * Applies the keyEvolutionPsi method "numberOfRounds" times 
+	 * and save each result in a matrix. 
+	 */
+	private void evolveKey(){
+		keyEvolution = new byte[numberOfRounds + 1][3][2 * t];
+		Util.blockToMatrix(cipherKey, keyEvolution[0], true);
+	
+		Util.copyMatrix(keyEvolution[0], keyEvolution[1]);
+		for (int i = 1; i <= numberOfRounds; i++)
+		{
+			keyEvolutionPsi(keyEvolution[i], i, false);
+			
+			if (i != numberOfRounds){
+				Util.copyMatrix(keyEvolution[i], keyEvolution[i+1]);
+			}
+		}	
 	}
 	/**
 	 * The constant addition layer 'sigma'<br/>
@@ -358,5 +412,5 @@ public class Curupira1 implements BlockCipher {
 			}
 		}
 		return q;
-	}
+	}	
 }
