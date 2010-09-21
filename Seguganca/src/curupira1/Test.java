@@ -1,35 +1,24 @@
 package curupira1;
 
+import util.Util;
+import util.Printer;
+
 public class Test {
 	public static void main(String[] args) {
-//		byte[] cipherKey = { 	(byte) 0x01, (byte) 0x02, (byte) 0x03,
-//								(byte) 0x04, (byte) 0x05, (byte) 0x06,
-//								(byte) 0x07, (byte) 0x08, (byte) 0x09,
-//								(byte) 0x0A, (byte) 0x0B, (byte) 0x0C};
-//		byte[] plainText = { 	(byte) 0x01, (byte) 0x02, (byte) 0x03,
-//								(byte) 0x04, (byte) 0x05, (byte) 0x06,
-//								(byte) 0x07, (byte) 0x08, (byte) 0x09,
-//								(byte) 0x0A, (byte) 0x0B, (byte) 0x0C};
-
-		byte[] cipherKey = { 	(byte) 0x00, (byte) 0x00, (byte) 0x00,
-								(byte) 0x00, (byte) 0x00, (byte) 0x00,
-								(byte) 0x00, (byte) 0x00, (byte) 0x00,
-								(byte) 0x00, (byte) 0x00, (byte) 0x00};
-				
-		byte[] plainText = { 	(byte) 0x00, (byte) 0x00, (byte) 0x00,
-								(byte) 0x00, (byte) 0x00, (byte) 0x00,
-								(byte) 0x00, (byte) 0x00, (byte) 0x00,
-								(byte) 0x00, (byte) 0x00, (byte) 0x00};
-
-		byte[] cipherText = new byte[plainText.length];
+		
+		String key = "000000000000000000000000";
+		String plain = "000000000000000000000000";
+		String cipher = "b48cbb9149131c39995ffb3a";
+		
+		byte[] cipherKey = Util.convertStringToVector(key);
+		byte[] plainText = Util.convertStringToVector(plain);
+		byte[] cipherText = Util.convertStringToVector(cipher);
+		Printer.printVectorAsPlainText("original plain  ", plainText);
+		
 		Curupira1 c = new Curupira1();
 		
-//		byte[][] teste = new byte[3][4];
-//		c.blockToMatrix(cipherKey, teste, false);
-//		c.permutationLayerPi(teste);
-//		Curupira1.printMatrix("teste", teste);
-		
 		c.makeKey(cipherKey, cipherKey.length * 8);
-		c.encrypt(plainText, cipherText);
+//		c.encrypt(plainText, cipherText);
+		c.decrypt(cipherText, plainText);
 	}
 }
