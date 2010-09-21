@@ -99,7 +99,6 @@ public class Conversor {
 				}
 			}
 		}
-			
 	}
 	/**
 	 * Convert a matrix representing a M2t matrix a to vector representing a block
@@ -122,5 +121,11 @@ public class Conversor {
 				}
 			}
 		}
+	}
+	
+	public static void copyMatrix(byte[][] in, byte[][] out){
+		for (int i = 0; i < in.length; i++)
+			for (int j = 0; j < in[i].length; j++)
+				out[i][j] = in[i][j];
 	}
 }
