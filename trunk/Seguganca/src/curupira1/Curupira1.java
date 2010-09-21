@@ -1,6 +1,8 @@
 package curupira1;
 
 import pcs2055.BlockCipher;
+import util.Conversor;
+import util.Printer;
 
 public class Curupira1 implements BlockCipher {
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -9,6 +11,9 @@ public class Curupira1 implements BlockCipher {
 	private int blockBits;
 	private int keyBits;
 	private byte[] cipherKey;
+	private int t;
+	private int numberOfRounds;
+	private boolean debug = false;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * Inherited abstract methods
@@ -23,49 +28,55 @@ public class Curupira1 implements BlockCipher {
 	}
 
 	public void makeKey(byte[] cipherKey, int keyBits) {
-		//Testado
 		this.cipherKey = cipherKey;
 		this.keyBits = keyBits;
+		this.t = keyBits/48;
+		this.numberOfRounds = 4 * t + 2;	
 	}
 
-	public void encrypt(byte[] mBlock, byte[] cBlock) {		
-		int t = this.keyBits/48;
-		int numberOfRounds = 4 * t + 2;
-		
+	public void encrypt(byte[] mBlock, byte[] cBlock) {				
 		// Plain text to matrix
-		byte[][] plainTextMatrix = new byte[3][4];
-		blockToMatrix(mBlock, plainTextMatrix, false);
-		printMatrix("------- Plaintext -------", plainTextMatrix);
+		byte[][] blockMatrix = new byte[3][4];
+		Conversor.blockToMatrix(mBlock, blockMatrix, true);
+		if(debug)
+			Printer.printMatrix("------- Plaintext -------", blockMatrix);
 		
 		// Cipher key to matrix
-		byte[][] key = new byte[3][2*t];
-		blockToMatrix(this.cipherKey, key, true);
-		printMatrix("------- Key -------", key);
-		
-		// whitening
-		keyEvolutionPsi(key, 0, false);
+		byte[][] key = new byte[3][2 * t];
+		Conversor.blockToMatrix(this.cipherKey, key, true);
+		if(debug)
+			Printer.printMatrix("------- Key -------", key);
 		
 		//Initial key addition
-		keyAdditionLayerSigma(plainTextMatrix, keySelectionPhi(key));
+		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
 		
-		printMatrix("****** Encryption ******\n-- 1st add round key", plainTextMatrix);
+		if(debug)
+			Printer.printMatrix("****** Encryption ******\n-- 1st add round key", blockMatrix);
 		// round functions
 		for (int round = 1; round < numberOfRounds; round ++){
 			// Key evolution 'psi
 			keyEvolutionPsi(key, round, false);
-			
+
 			// round function
-			roundFunctions(plainTextMatrix, key);
+			roundFunctions(blockMatrix, key);
 			
-			printMatrix("--- Round " + round + " ---", plainTextMatrix);
+			if(debug)
+				Printer.printMatrix("--- Round " + round + " ---", blockMatrix);
 		}
 		//last round function
-		nonLinearLayerGama(plainTextMatrix);
-		permutationLayerPi(plainTextMatrix);
+		nonLinearLayerGama(blockMatrix);
+		permutationLayerPi(blockMatrix);
+		
 		keyEvolutionPsi(key, numberOfRounds, false);
-		keyAdditionLayerSigma(plainTextMatrix, keySelectionPhi(key));
-				
-		printMatrix("--- Ciphertext ---", plainTextMatrix);
+		
+		keyAdditionLayerSigma(blockMatrix, keySelectionPhi(key));
+		
+		if(debug)
+			Printer.printMatrix("--- Ciphertext ---", blockMatrix);
+		
+		byte[] blockReturn = new byte[blockMatrix[0].length * 3];
+		Conversor.matrixToBlock(blockReturn, blockMatrix, true);
+		Printer.printVector("nosso  ", blockReturn);
 	}
 
 	public void decrypt(byte[] cBlock, byte[] mBlock) {
@@ -138,7 +149,7 @@ public class Curupira1 implements BlockCipher {
 			textMatrix[0][j] = (byte)(textMatrix[0][j] ^ v); 
 			textMatrix[1][j] = (byte)(textMatrix[1][j] ^ w);
 			textMatrix[2][j] = (byte)(textMatrix[2][j] ^ v ^ w);
-		}
+		}	
 	}
 
 	/**
@@ -242,22 +253,22 @@ public class Curupira1 implements BlockCipher {
 	/**
 	 * The key selection 'phi'<br/>
 	 * k(r) = phi[r](K) <=> k[0][j](r) = S[K[0][j](r)] and k[i][j](r) = K[i][j](r) for i > 0 and 0 <= j < 4.
-	 * @param K Matrix of byte
+	 * @param key Matrix of byte
 	 * @return k the truncated cipher key matrix
 	 */
-	private byte[][] keySelectionPhi(byte[][] K){ 
-		byte[][] k = new byte[3][4];
-		for(int i = 0; i < K.length; i ++){
-			for (int j = 0; j < K[i].length; j++){
+	private byte[][] keySelectionPhi(byte[][] key){ 
+		byte[][] returnKey = new byte[3][4];
+		for(int i = 0; i < key.length; i ++){
+			for (int j = 0; j < key[i].length; j++){
 				if(i == 0){
-					k[i][j] = S(K[0][j]);
+					returnKey[i][j] = S(key[0][j]);
 				}
 				else{
-					k[i][j] = K[i][j];
+					returnKey[i][j] = key[i][j];
 				}
 			}
 		}
-		return k;
+		return returnKey;
 	}
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -293,7 +304,7 @@ public class Curupira1 implements BlockCipher {
 	 * @param u byte
 	 * @return S(u) byte
 	 */
-	public byte S(byte u) {
+	private byte S(byte u) {
 		// Although it's not a good Java convention, we used uppercase names to
 		// match the paper names
 		final byte[] P = {0x03, 0x0F, 0x0E, 0x00, 0x05, 0x04, 0x0B, 0x0C, 0x0D, 0x0A, 0x09, 0x06, 0x07, 0x08, 0x02, 0x01};
@@ -319,7 +330,7 @@ public class Curupira1 implements BlockCipher {
 	 * @param s Matrix of byte
 	 * @return q(s) Matrix of byte
 	 */
-	public byte[][] q(int s){
+	private byte[][] q(int s){
 		int t = keyBits / 48;
 		byte[][] q = new byte[3][2*t];
 		
@@ -347,83 +358,5 @@ public class Curupira1 implements BlockCipher {
 			}
 		}
 		return q;
-	}
-	
-	/**
-	 * Convert a vector representing a block to a matrix representing a M2t matrix
-	 * @param block Block of byte
-	 * @param matrix Matrix of byte
-	 * @param columnMapping Boolean
-	 */
-	public void blockToMatrix(byte[] block, byte[][] matrix, boolean columnMapping){
-		if(columnMapping){
-			int t = block.length / 3;
-			for(int i = 0; i < 3; i++) {
-				for(int j = 0; j < t; j++) {
-					matrix[i][j] = block [i + 3 * j];
-				}
-			}
-		}
-		else{
-			int size = block.length / 3;
-			for(int i = 0; i < 3; i++) {
-				for(int j = 0; j < size; j++) {
-					matrix[i][j] = block [size * i + j];
-				}
-			}
-		}
-			
-	}
-	/**
-	 * Convert a matrix representing a M2t matrix a to vector representing a block
-	 * @param block Block of byte
-	 * @param matrix Matrix of byte
-	 */
-	private void matrixToBlock(byte[] block, byte[][] matrix){
-		int size = matrix[0].length;
-		for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < size; j++) {
-				block [size * i + j] = matrix[i][j];
-			}
-		}
-	}
-	
-	
-	public static void printVector(String name, byte[] A){
-		System.out.printf(name + ": ");
-		for (int i = 0; i < A.length; i++){ 
-            System.out.printf("%2s ", byteToHex(A[i]));
-		}
-		System.out.println();
-	}
-	
-	public static void printVector(byte[] A){
-		System.out.printf("|");
-		for (int i = 0; i < A.length; i++){ 
-            System.out.printf("%2s", byteToHex(A[i]));
-            if (i < (A.length - 1)){
-            	System.out.printf(" ");
-            }
-		}
-		System.out.println("|");
-	}
-	
-	public static void printMatrix(String name, byte[][] A){
-		System.out.println(name);
-		for (int i = 0; i < A.length; i++){ 
-			printVector(A[i]);
-		}
-		System.out.println();
-	}
-	
-	public static String byteToHex(byte b){
-		return Integer.toString((b & 0xFF) + 0x100, 16).substring(1);
-	}
-
-	public static String byteToHex(byte[] b){
-		String result = "";
-		for (int i = 0; i < b.length; i++)
-			result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
-		return result;
 	}
 }
