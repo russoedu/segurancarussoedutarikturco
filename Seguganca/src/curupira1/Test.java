@@ -6,9 +6,9 @@ import util.Printer;
 public class Test {
 	public static void main(String[] args) {
 		
-		String key = "000000000000000000000000";
-		String plain = "000000000000000000000000";
-		String cipher = "b48cbb9149131c39995ffb3a";
+		String key = "555555555555555555555555555555555555555555555555";
+		String plain = "005555550055555500555555";
+		String cipher = "590a20b72b05194ae4a1a6f2";
 		
 		byte[] cipherKey = Util.convertStringToVector(key);
 		byte[] plainText = Util.convertStringToVector(plain);

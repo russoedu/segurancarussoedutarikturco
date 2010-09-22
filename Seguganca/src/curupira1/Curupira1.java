@@ -14,7 +14,7 @@ public class Curupira1 implements BlockCipher {
 	private int t;
 	private int numberOfRounds;
 	private byte keyEvolution[][][];
-	private boolean stepByStepDebug = true;
+	private boolean stepByStepDebug = false;
 	private boolean finalAnswerDebug = true;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -312,8 +312,8 @@ public class Curupira1 implements BlockCipher {
 	 */
 	private byte[][] keySelectionPhi(byte[][] key){ 
 		byte[][] returnKey = new byte[3][4];
-		for(int i = 0; i < key.length; i ++){
-			for (int j = 0; j < key[i].length; j++){
+		for(int i = 0; i < returnKey.length; i ++){
+			for (int j = 0; j < returnKey[i].length; j++){
 				if(i == 0){
 					returnKey[i][j] = S(key[0][j]);
 				}
