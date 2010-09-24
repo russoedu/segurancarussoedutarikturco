@@ -31,4 +31,10 @@ public interface BlockCipher {
 	 * @param mBlock	plaintext block. 
 	 */
 	void decrypt(byte[] cBlock, byte[] mBlock);
+	/** 
+	 * Apply a square-complete transform to exactly one block of ciphertext. 
+	 * @param cBlock	ciphertext block. 
+	 * @param mBlock	plaintext block.
+	 */
+	void Sct(byte[] cBlock, byte[] mBlock);
 }

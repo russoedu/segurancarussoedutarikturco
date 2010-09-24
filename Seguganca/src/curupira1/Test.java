@@ -6,7 +6,7 @@ import util.Printer;
 public class Test {
 	public static void main(String[] args) {
 		
-		String key = "555555555555555555555555555555555555555555555555";
+		String key = "555555555555555555555555";
 		String plain = "005555550055555500555555";
 		String cipher = "590a20b72b05194ae4a1a6f2";
 		
