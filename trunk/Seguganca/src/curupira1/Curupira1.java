@@ -412,5 +412,20 @@ public class Curupira1 implements BlockCipher {
 			}
 		}
 		return q;
+	}
+
+	@Override
+	public void Sct(byte[] cBlock, byte[] mBlock) {
+
+		byte[][] blockMatrix = new byte[3][4];
+		Util.blockToMatrix(mBlock, blockMatrix, true);
+		for (int i = 0; i < 4; i++)
+		{
+			nonLinearLayerGama(blockMatrix);
+			permutationLayerPi(blockMatrix);
+			linearDiffusionLayerTheta(blockMatrix);
+		}
+		
+		Util.matrixToBlock(cBlock, blockMatrix, true);
 	}	
 }
