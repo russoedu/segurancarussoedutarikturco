@@ -72,8 +72,6 @@ public class Marvin implements MAC {
 		
 		byte[] ciphered = new byte[12];
 		
-		System.out.print(Util.byteToHex(lpad(teste2)));
-		
 		cipher.encrypt(A[0], ciphered);
 	}
 	
