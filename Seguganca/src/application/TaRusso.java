@@ -40,6 +40,8 @@ public class TaRusso {
 		Marvin marvin = new Marvin();
 		LetterSoup letterSoup = new LetterSoup();
 		
+		marvin.setCipher(curupira1);
+		
 		System.out
 				.println("************************************************************");
 		System.out
@@ -102,10 +104,17 @@ public class TaRusso {
 				//Marvin - update(byte[] aData, int aLength)
 				//getTag
 				case 4:
-					autenticateDocument = readDocument("Indique o caminho do arquivo para ser apenas autenticado: ");
-//					curupira1.makeKey(cipherKey, keyBits);
-//					marvin.setKey(cipherKey, keyBits);
-//					marvin.update(autenticateDocument.getBytes(), autenticateDocument.length());
+					if(variableAreFilled(true, true, true)){
+						autenticateDocument = readDocument("Indique o caminho do arquivo para ser apenas autenticado: ");
+						marvin.setKey(cipherKey, keyBits);
+						marvin.init();
+						marvin.update(autenticateDocument.getBytes(), aLength);
+						
+						byte[] buffer = new byte[12];
+						buffer = marvin.getTag(buffer, 4);
+						
+						Printer.printVectorAsPlainText("tag", buffer);	
+					}
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo com seu respectivo MAC para ser validado
@@ -190,10 +199,8 @@ public class TaRusso {
 	 * conforme o tamanho escolhido da chave".
 	 */
 	private static void cipherKeyInput() {
-		if(keyBits == 0){
-			System.out.println("Você precisa escolher o tamanho da chave antes.\n");
-		}
-		else{
+		
+		if(variableAreFilled(true, false, false)){
 			int maxSize = keyBits / 8;
 			cipherKey = new byte[maxSize];
 			
@@ -340,5 +347,25 @@ public class TaRusso {
 			}
 		}
 		return readFile[1];
+	}
+	private static boolean variableAreFilled(boolean keyBitsVariable, boolean cipherKeyVariable, boolean aLengthOrIvVariable){
+		String message = "";
+		if(keyBitsVariable)
+			if(keyBits == 0)
+				message += "\tVocê precisa escolher o tamanho da chave antes (opção 1).\n";
+		
+		if(cipherKeyVariable)
+			if(cipherKey == null)
+				message += "\tVocê precisa definir uma senha antes (opção 3).\n";
+
+		if(aLengthOrIvVariable)
+			if(aLength == 0)
+				message += "\tVocê precisa escolher o tamanho de MAC e IV antes (opção 2).\n";
+		
+		if (!message.isEmpty()){
+			System.out.println("Os seguintes erros foram encontrados:\n" + message);
+			return false;
+		}
+		return true;
 	}
 }
