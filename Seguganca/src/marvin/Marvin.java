@@ -1,92 +1,59 @@
 package marvin;
 
-import curupira1.Curupira1;
 import pcs2055.BlockCipher;
 import pcs2055.MAC;
-import util.Util;
 
 public class Marvin implements MAC {
 	
 	byte[] tag;
 	BlockCipher cipher;
-	byte[] aData;
+	byte[][] M = new byte[0][];
 	int aLength;
-	int n;
+	final int n = 12;
+	byte[] R;
 
 	@Override
-	public byte[] getTag(byte[] tag) {
+	public byte[] getTag(byte[] tag, int tagBits) {
 		// TODO Auto-generated method stub
-		return null;
+		
+		byte[][] A = new byte[(aLength-1)/12 + 2][];
+		A[0] = new byte[n];
+		byte[] O = multiplyByPx(this.R);
+		
+		for (int i = 1; i <= (this.aLength-1)/12 + 1; i++)
+		{
+			byte[] paddedM = rpad(this.M[i - 1]);
+			A[i] = new byte[n];
+			this.cipher.Sct(A[i], xor(paddedM, O));
+			A[0] = xor(A[0], A[i]);
+			O = multiplyByPx(O);
+		}
+
+		A[0] = xor(A[0], xor(this.R, xor(rpad(rightBinAndSetOne((this.n - tagBits)*8)), lpad(leftBin(this.aLength*8)))));
+		
+		byte[] ciphered = new byte[n];
+		
+		this.cipher.encrypt(A[0], ciphered);
+
+		return ciphered;
 	}
 
 	@Override
 	public void init() {
-
-	}
-	
-	void eu() {
-		
-		aLength = 1;
-		n = 12;
-		byte[][] A = new byte[aLength + 1][];
-		A[0] = new byte[12];
-		
-		byte[] c = new byte[aLength];
+		byte[] c = new byte[1];
 		c[0] = 0x2A;
-		byte[][] M = new byte[aLength][];
-		M[0] = new byte[aLength];
-		M[0][0] = 0x00;
-		
-		byte[] paddedC = lpad(c);
-		byte[] cipherC = new byte[12];
-		
-		
-		byte[] key = new byte[12];
-		for (int i = 0; i < 12; i++)
-			key[i] = 0x00;
-		
-		cipher.makeKey(key, 96);
-		cipher.encrypt(paddedC, cipherC);
-
-		byte[] R = xor(paddedC, cipherC);
-		byte[] O = multiplyByPx(R);
-		
-		byte[] paddedM = rpad(M[0]);
-		cipher.Sct(A[0], paddedM);
-		
-		for (int i = 1; i <= aLength; i++)
-		{
-			A[i] = new byte[12];
-			cipher.Sct(A[i], xor(paddedM, O));
-			A[0] = xor(A[0], A[i]);
-			O = multiplyByPx(O);
-		}
-		
-		byte[] teste = new byte[1];
-		teste[0] = (byte)0x80;
-		
-		byte[] teste2 = new byte[1];
-		teste2[0] = (byte)0x08;
-		
-		A[0] = xor(A[0], xor(R, xor(rpad(teste), lpad(teste2))));
-		
-		byte[] ciphered = new byte[12];
-		
-		cipher.encrypt(A[0], ciphered);
-	}
 	
-	public static void main(String[] args)
-	{
-		Curupira1 c = new Curupira1();
-		Marvin ae = new Marvin();
-		ae.setCipher(c);
-		ae.eu();
-		
+		byte[] paddedC = lpad(c);
+		byte[] cipherC = new byte[n];
+
+		this.cipher.encrypt(paddedC, cipherC);
+
+		this.R = xor(paddedC, cipherC);
+
 	}
 
 	@Override
 	public void setCipher(BlockCipher cipher) {
-		// TODO Auto-generated method stub
 		this.cipher = cipher;
 
 	}
@@ -99,9 +66,44 @@ public class Marvin implements MAC {
 	@Override
 	public void update(byte[] aData, int aLength) {
 		// TODO Auto-generated method stub
-		this.aData = aData;
-		this.aLength = aLength;
-
+		
+		if (aLength == 0)
+			return;
+		
+		this.aLength += aLength;
+		
+		byte[] vectorM = new byte[this.aLength];
+		int position = -1;
+		
+		for (int i = 0; i < this.M.length; i++)
+		{
+			for (int j = 0; j < this.M[i].length; j++)
+			{
+				position = i * n + j;
+				vectorM[i*n + j] = this.M[i][j];
+			}
+		}
+		
+		for (int i = 0; i < aLength; i++)
+		{
+			position++;
+			vectorM[position] = aData[i];
+		}
+		
+		byte[][] newM = new byte[(this.aLength - 1)/n + 1][];
+		
+		for (int i = 0; i <= (this.aLength - 1)/n; i++)
+		{
+			int size = (this.aLength - i*n) >= n ? n : this.aLength - i*n;
+			
+			newM[i] = new byte[size];
+			for (int j = 0; j < size; j++)
+			{
+				newM[i][j] = vectorM[i * n + j];
+			}
+		}
+		
+		this.M = newM;
 	}
 	
 	byte[] rpad(byte[] message)
@@ -159,8 +161,7 @@ public class Marvin implements MAC {
 	
 	byte T1 (byte U)
 	{
-		return (byte)(U ^ (U >> 3) ^ (U >> 5));
-		
+		return (byte)(U ^ ((U & 0xFF ) >>> 3) ^ ((U & 0xFF) >>> 5));
 	}
 	
 	byte T0 (byte U)
@@ -168,16 +169,20 @@ public class Marvin implements MAC {
 		return (byte)((U << 5) ^ (U << 3));
 	}
 	
-	byte[] bin(int input)
+	byte[] rightBinAndSetOne(int input)
 	{	
-		String binaryString = Integer.toBinaryString(input);
+		String binaryString = "";
+		if (input != 0)
+			binaryString = Integer.toBinaryString(input);
+		
+		binaryString += '1';
 
 		byte[] output = new byte[(binaryString.length()/4) + 1];
 		
 		int i = 0;
 		while(binaryString.length() != 0)
 		{
-			if (binaryString.length() >= 4)
+			if (binaryString.length() >= 8)
 			{
 				String binaryByteString = binaryString.substring(0, 3);
 				output[i] = (byte)Integer.parseInt(binaryByteString, 2);
@@ -185,12 +190,29 @@ public class Marvin implements MAC {
 			}
 			else
 			{
-				for (int j = binaryString.length(); j < 4; j++)
+				for (int j = binaryString.length(); j < 8; j++)
 					binaryString += '0';
 				output[i] = (byte)Integer.parseInt(binaryString, 2);
 				binaryString = "";
 			}
 			i++;
+		}
+		
+		return output;
+	}
+	
+	byte[] leftBin(int input)
+	{	
+		int size = (Integer.toBinaryString(input).length() - 1)/8 + 1;
+
+		byte[] output = new byte[size];
+
+		int i = 1;
+		while(Integer.highestOneBit(input) != 0)
+		{
+			output[size - i] = (byte)input;
+			
+			input = input >> 8;
 		}
 		
 		return output;

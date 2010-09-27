@@ -34,5 +34,5 @@ public interface MAC {
 	 * If the tag parameter is null, a new buffer is automatically 
 	 * allocated, otherwise the input buffer is returned. 
 	 */
-	byte[] getTag(byte[] tag);
+	byte[] getTag(byte[] tag, int tagBits);
 }
