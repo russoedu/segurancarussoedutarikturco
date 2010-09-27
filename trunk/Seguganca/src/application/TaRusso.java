@@ -12,7 +12,11 @@ import curupira1.Curupira1;
 
 public class TaRusso {
 	private static boolean debug = false;
-
+	
+	private static Curupira1 curupira1 = new Curupira1();
+	private static Marvin marvin = new Marvin();
+	private static LetterSoup letterSoup = new LetterSoup();
+	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
 	private static String lineRead;
@@ -29,11 +33,7 @@ public class TaRusso {
 	
 	
 	
-	public static void main(String[] args) throws IOException {
-		Curupira1 curupira1 = new Curupira1();
-		Marvin marvin = new Marvin();
-		LetterSoup letterSoup = new LetterSoup();
-		
+	public static void main(String[] args) throws IOException {		
 		marvin.setCipher(curupira1);
 		
 		System.out
@@ -43,23 +43,11 @@ public class TaRusso {
 		System.out
 				.println("************************************************************\n");
 
-//		while(true){
-			mainMenu(curupira1, marvin, letterSoup);
-//		}
-		// Key Size input
-//		keySizeInput();
-
-		// IV input
-//		ivSizeInput();
-
-		// MAC input
-//		aLengthInput();
-
-		// Cipher Key input
-//		cipherKeyInput();
+		mainMenu();
+		
 	}
 
-	private static void mainMenu(Curupira1 curupira1, Marvin marvin, LetterSoup letterSoup){
+	private static void mainMenu(){
 		String instructions = "Por favor, escolha uma das opções abaixo:\n" +
 				"[1] Selecionar um tamanho de chave dentre os valores admissíveis\n" +
 				"[2] Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco\n" +
@@ -136,7 +124,7 @@ public class TaRusso {
 							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + macDocument + "?");
 						
 						if(Printer.getVectorAsPlainText(buffer).equals(macDocument))
-							System.out.println("Autenticação é válida.");
+							System.out.println("Autenticação é válida: as tags são iguais.");
 						else
 							System.out.println("Autenticação inválida.");	
 					}
