@@ -28,6 +28,14 @@ public class Printer {
 		System.out.println();
 	}
 	
+	public static String getVectorAsPlainText(byte[] A){
+		String vectorString = new String();
+		for (int i = 0; i < A.length; i++){ 
+            vectorString += Util.byteToHex(A[i]);
+		}
+		return vectorString;
+	}
+	
 	public static void printMatrix(String name, byte[][] A){
 		System.out.println(name);
 		for (int i = 0; i < A.length; i++){ 

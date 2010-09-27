@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -142,35 +143,39 @@ public class Util {
 				out[i][j] = in[i][j];
 	}
 
-	public static boolean readFile(String[] filePath) {
+	public static String readFile(String filePath) {
+		String text = "";
+		try {
+			FileReader reader = new FileReader(filePath);
+			BufferedReader in = new BufferedReader(reader);
+			String str;
+			while ((str = in.readLine()) != null){
+				text += str;
+				}
+			in.close();
+			}
+			catch (IOException e){
+				text = null;
+			} 
+		return text;
+	}
+	
+	public static boolean saveFile(String filePath, String text) throws IOException {
 		boolean returnValue = false;
-		File file = new File(filePath[0]);
-		StringBuffer contents = new StringBuffer();
-		BufferedReader reader = null;
-
+		File file = new File(filePath);
+		FileWriter writer = new FileWriter(file);
+		
 		//Unix
-		if(filePath[0].contains("/")){
-			filePath[0] = filePath[0].split("/")[filePath[0].split("/").length - 1];
+		if(filePath.contains("/")){
+			filePath = filePath.split("/")[filePath.split("/").length - 1];
 		}
 		//Windows
-		else if(filePath[0].contains("\\")){
-			filePath[0] = filePath[0].split("\\")[filePath[0].split("/").length - 1];		
-		}
-		//relative path
-		else{
-			filePath[0] = filePath[0];						
+		else if(filePath.contains("\\")){
+			filePath = filePath.split("\\")[filePath.split("/").length - 1];		
 		}
 		
-		try {
-			reader = new BufferedReader(new FileReader(file));
-			String text = null;
-
-			// repeat until all lines is read
-			while ((text = reader.readLine()) != null) {
-				contents.append(text).append(
-						System.getProperty("line.separator"));
-			}
-			filePath[1] = contents.toString();
+		try {			
+			writer.write(text);
 			returnValue = true;
 		} catch (FileNotFoundException e) {
 			returnValue = false;
@@ -178,8 +183,8 @@ public class Util {
 			returnValue = false;
 		} finally {
 			try {
-				if (reader != null) {
-					reader.close();
+				if (writer != null) {
+					writer.close();
 				}
 			} catch (IOException e) {
 				returnValue = false;

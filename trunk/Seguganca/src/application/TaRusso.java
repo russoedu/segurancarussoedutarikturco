@@ -4,15 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import pcs2055.BlockCipher;
-
-import curupira1.Curupira1;
-
 import lettersoup.LetterSoup;
 import marvin.Marvin;
-
 import util.Printer;
 import util.Util;
+import curupira1.Curupira1;
 
 public class TaRusso {
 	private static boolean debug = false;
@@ -25,10 +21,8 @@ public class TaRusso {
 	private static int ivLength = 0;
 	private static int aLength = 0;
 	private static byte[] cipherKey = null;
-	private static String autenticateDocument;
-	private static String macValidateDocument;
-	private static String cipherAndAutenticateDocument;
-	private static String validateAndDecipherDocument;
+	private static String document;
+	private static String macDocument;
 	
 //	private static String cipherAndAutenticateDocument;
 	
@@ -76,6 +70,7 @@ public class TaRusso {
 				"[7] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado\n" +
 				"[8] Selecionar um arquivo para ser cifrado e autenticado, e um arquivo correspondente de dados associados para ser autenticado\n" +
 				"[9] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado, um arquivo correspondente de dados associados para ser autenticado\n" +
+				"[0] Fnalizar programa\n" +
 				"Opção: ";
 		boolean validValue = false;
 		int key;
@@ -101,26 +96,50 @@ public class TaRusso {
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo para ser apenas autenticado
-				//Marvin - update(byte[] aData, int aLength)
-				//getTag
 				case 4:
-					if(variableAreFilled(true, true, true)){
-						autenticateDocument = readDocument("Indique o caminho do arquivo para ser apenas autenticado: ");
+					if(variableAreFilled(true, true, false)){
+						String[] filePath = new String[2];
+						document = readDocument("Indique o caminho do arquivo para ser apenas autenticado: ", filePath);
 						marvin.setKey(cipherKey, keyBits);
 						marvin.init();
-						marvin.update(autenticateDocument.getBytes(), aLength);
 						
+						//TODO - verificar se a implementação está correta
+						marvin.update(document.getBytes(), document.length());
 						byte[] buffer = new byte[12];
 						buffer = marvin.getTag(buffer, 4);
 						
-						Printer.printVectorAsPlainText("tag", buffer);	
+						//Save .mac file
+						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
+						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
+						
+						saveDocument("Autenticação executada com sucesso.\n" +
+								"Arquvio \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Printer.getVectorAsPlainText(buffer));
 					}
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo com seu respectivo MAC para ser validado
-				//Marvin - update(byte[] aData, int aLength)
-				//Marvin - getTag(byte[] tag)
 				case 5:
+					if(variableAreFilled(true, true, false)){
+						String[] filePath = new String[2];
+						document = readDocument("Indique o caminho do arquivo para ser validado: ", filePath);
+						macDocument = readDocument("Indique o caminho do arquivo \".mac\" para validar: ", filePath);
+						
+						marvin.setKey(cipherKey, keyBits);
+						marvin.init();
+						
+						//TODO - verificar se a implementação está correta
+						marvin.update(document.getBytes(), document.length());
+						byte[] buffer = new byte[12];
+						buffer = marvin.getTag(buffer, 4);
+						
+						if(debug)
+							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + macDocument + "?");
+						
+						if(Printer.getVectorAsPlainText(buffer).equals(macDocument))
+							System.out.println("Autenticação é válida.");
+						else
+							System.out.println("Autenticação inválida.");	
+					}
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo para ser cifrado e autenticado
@@ -148,6 +167,10 @@ public class TaRusso {
 				//Marvin - init()
 				case 9:
 					System.out.print(instructions);
+					break;
+				case 0:
+					validValue = true;
+					System.out.println("[programa encerrado]");
 					break;
 				default:
 					System.out.print("Valor inválido. " + instructions);
@@ -317,37 +340,83 @@ public class TaRusso {
 	/**
 	 * Read a text file.
 	 */
-	private static String readDocument(String instructions) {
-		String[] readFile = new String[2];
+	private static String readDocument(String instructions, String[] filePath) {
 		boolean validValue = false;
-
+		String text = "";
+		
 		System.out.print(instructions);
 		while (!validValue) {
 			try {
-				readFile[0] = reader.readLine().trim();
-
+				filePath[0] = reader.readLine().trim();
+				
+				//Get the fileName without it's path
+				//Unix
+				if(filePath[0].contains("/")){
+					filePath[1] = filePath[0].split("/")[filePath[0].split("/").length - 1];
+				}
+				//Windows
+				else if(filePath[0].contains("\\")){
+					filePath[1] = filePath[0].split("\\")[filePath[0].split("/").length - 1];		
+				}
+				
 				// Validation
-				if (Util.readFile(readFile)) {
+				text = Util.readFile(filePath[0]); 
+				if (null != text) {
 					// Output
-					System.out.println("Arquivo \"" + readFile[0]	+ "\" lido com sucesso.");
-
+					System.out.println("Arquivo \"" + filePath[1]	+ "\" lido com sucesso.");
 					if (debug){
 						System.out.println("Conteúdo do arquivo:");
-						System.out.println(readFile[1]);
+						System.out.println(text);
 					}
 
 					validValue = true;
 				} else {
-					System.out.print("O arquivo \"" + readFile[0]
+					System.out.print("O arquivo \"" + filePath[1]
 							+ "\" não foi encontrado. " + instructions);
 				}
 			} catch (Exception e) {
-				System.out.print("O arquivo \"" + readFile[0]
+				System.out.print("O arquivo \"" + filePath[1]
 						+ "\" não foi encontrado. " + instructions);
 			}
 		}
-		return readFile[1];
+		return text;
 	}
+	
+	/**
+	 * Save a text file.
+	 */
+	private static void saveDocument(String message, String filePath, String text) {
+		boolean validValue = false;
+		
+		System.out.println(message);
+		while (!validValue) {
+			try {
+				if (Util.saveFile(filePath, text)) {
+					// Output
+					System.out.println("Arquivo gravado com sucesso.");
+
+					if (debug){
+						System.out.println("Conteúdo do arquivo:");
+					}
+
+					validValue = true;
+				} else {
+					System.out.print("Houve um erro na gravação. Enrando em loop infinito :P");
+				}
+			} catch (Exception e) {
+				System.out.print("Houve um erro na gravação. Enrando em loop infinito :P");
+			}
+		}
+	}
+	
+	
+	/**
+	 * Check if the variables are already filled
+	 * @param keyBitsVariable
+	 * @param cipherKeyVariable
+	 * @param aLengthOrIvVariable
+	 * @return
+	 */
 	private static boolean variableAreFilled(boolean keyBitsVariable, boolean cipherKeyVariable, boolean aLengthOrIvVariable){
 		String message = "";
 		if(keyBitsVariable)
