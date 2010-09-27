@@ -18,16 +18,12 @@ public class Util {
 	 * @param stringValue
 	 * @return array of bytes
 	 */
-	public static byte[] convertStringToVector(String stringValue) {
-		if (stringValue.length() != 24 && stringValue.length() != 36
-				&& stringValue.length() != 48) {
-			return null;
-		} else {
-			int size = stringValue.length();
+	public static byte[] convertStringToVector(String plainText){
+			int size = plainText.length();
 			byte[] vectorBlock = new byte[size / 2];
 			for (int i = 0; i < size; i += 2) {
-				String sByte1 = stringValue.substring(i, i + 1);
-				String sByte2 = stringValue.substring(i + 1, i + 2);
+				String sByte1 = plainText.substring(i, i + 1);
+				String sByte2 = plainText.substring(i + 1, i + 2);
 
 				int byte1 = (stringToByte(sByte1) << (byte) 0x04);
 				;
@@ -36,7 +32,6 @@ public class Util {
 				vectorBlock[i / 2] = (byte) (byte1 ^ byte2);
 			}
 			return vectorBlock;
-		}
 	}
 
 	public static byte stringToByte(String sByte) {
