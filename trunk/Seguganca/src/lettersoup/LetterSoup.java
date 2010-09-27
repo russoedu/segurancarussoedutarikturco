@@ -1,8 +1,11 @@
 package lettersoup;
 
+import curupira1.Curupira1;
 import pcs2055.AEAD;
 import pcs2055.BlockCipher;
 import pcs2055.MAC;
+import util.Printer;
+import util.Util;
 
 public class LetterSoup implements AEAD {
 
@@ -10,6 +13,20 @@ public class LetterSoup implements AEAD {
 	int keyBits;
 	BlockCipher cipher;
 	MAC mac;
+	byte[][] M;
+	
+	public static void main (String[] args)
+	{
+		LetterSoup l = new LetterSoup();
+		byte[] nonce = new byte[12];
+		byte[] nonce2 = new byte[12];
+		Curupira1 c = new Curupira1();
+		byte[] key = new byte[12];
+		c.makeKey(key, 96);
+		c.encrypt(nonce, nonce2);
+		Printer.printVectorAsPlainText("nonce", nonce2);
+		l.LFSRC(nonce2);
+	}
 	
 	@Override
 	public byte[] decrypt(byte[] cData, int cLength, byte[] mData) {
@@ -56,5 +73,20 @@ public class LetterSoup implements AEAD {
 	@Override
 	public void setMAC(MAC mac) {
 		this.mac = mac;
+	}
+	
+	public void LFSRC (byte[] nonce)
+	{
+
+		byte[] O = Util.multiplyByPx(nonce);
+		byte[][] C = new byte[M.length][];
+		for (int i = 0; i < M.length; i++)
+		{
+			
+			byte[] ciphered = new byte[12];
+			cipher.encrypt(O, ciphered);
+			
+			C[i] = Util.xor(M[i], ciphered);
+		}
 	}
 }

@@ -2,10 +2,10 @@ package marvin;
 
 import pcs2055.BlockCipher;
 import pcs2055.MAC;
+import util.Util;
 
 public class Marvin implements MAC {
 	
-	byte[] tag;
 	BlockCipher cipher;
 	byte[][] M = new byte[0][];
 	int aLength;
@@ -14,28 +14,34 @@ public class Marvin implements MAC {
 
 	@Override
 	public byte[] getTag(byte[] tag, int tagBits) {
-		// TODO Auto-generated method stub
 		
 		byte[][] A = new byte[(aLength-1)/12 + 2][];
 		A[0] = new byte[n];
-		byte[] O = multiplyByPx(this.R);
+		byte[] O = Util.multiplyByPx(this.R);
 		
 		for (int i = 1; i <= (this.aLength-1)/12 + 1; i++)
 		{
 			byte[] paddedM = rpad(this.M[i - 1]);
 			A[i] = new byte[n];
-			this.cipher.Sct(A[i], xor(paddedM, O));
-			A[0] = xor(A[0], A[i]);
-			O = multiplyByPx(O);
+			this.cipher.Sct(A[i], Util.xor(paddedM, O));
+			A[0] = Util.xor(A[0], A[i]);
+			O = Util.multiplyByPx(O);
 		}
 
-		A[0] = xor(A[0], xor(this.R, xor(rpad(rightBinAndSetOne((this.n - tagBits)*8)), lpad(leftBin(this.aLength*8)))));
-		
+		A[0] = Util.xor(A[0], Util.xor(this.R, Util.xor(rpad(rightBinAndSetOne((this.n - tagBits)*8)), lpad(leftBin(this.aLength*8)))));
+	
 		byte[] ciphered = new byte[n];
 		
 		this.cipher.encrypt(A[0], ciphered);
+		
+		tag = new byte[tagBits];
+		
+		for (int i = 0; i < tagBits; i++)
+		{
+			tag[i] = ciphered[i];
+		}
 
-		return ciphered;
+		return tag;
 	}
 
 	@Override
@@ -48,14 +54,12 @@ public class Marvin implements MAC {
 
 		this.cipher.encrypt(paddedC, cipherC);
 
-		this.R = xor(paddedC, cipherC);
-
+		this.R = Util.xor(paddedC, cipherC);
 	}
 
 	@Override
 	public void setCipher(BlockCipher cipher) {
 		this.cipher = cipher;
-
 	}
 
 	@Override
@@ -65,7 +69,6 @@ public class Marvin implements MAC {
 
 	@Override
 	public void update(byte[] aData, int aLength) {
-		// TODO Auto-generated method stub
 		
 		if (aLength == 0)
 			return;
@@ -132,42 +135,6 @@ public class Marvin implements MAC {
 		return leftPaddedMessage;
 	}
 	
-	byte[] xor (byte[] a, byte[] b)
-	{
-		byte[] output = new byte[a.length];
-		
-		for (int i = 0; i < a.length; i++)
-			output[i] = (byte)(a[i] ^ b[i]);
-		
-		return output;
-			
-	}
-	
-	byte[] multiplyByPx(byte[] input)
-	{
-		byte[] output = new byte[input.length];
-		
-		for (int i = 0; i < 9; i++)
-		{
-			output[i] = input[i + 1];
-		}
-		
-		output[9] = (byte)(input[10] ^ T1(input[0]));
-		output[10] = (byte)(input[11] ^ T0(input[0]));
-		output[11] = input[0];
-		
-		return output;
-	}
-	
-	byte T1 (byte U)
-	{
-		return (byte)(U ^ ((U & 0xFF ) >>> 3) ^ ((U & 0xFF) >>> 5));
-	}
-	
-	byte T0 (byte U)
-	{
-		return (byte)((U << 5) ^ (U << 3));
-	}
 	
 	byte[] rightBinAndSetOne(int input)
 	{	
@@ -177,16 +144,16 @@ public class Marvin implements MAC {
 		
 		binaryString += '1';
 
-		byte[] output = new byte[(binaryString.length()/4) + 1];
+		byte[] output = new byte[(binaryString.length()/8) + 1];
 		
 		int i = 0;
 		while(binaryString.length() != 0)
 		{
 			if (binaryString.length() >= 8)
 			{
-				String binaryByteString = binaryString.substring(0, 3);
+				String binaryByteString = binaryString.substring(0, 8);
 				output[i] = (byte)Integer.parseInt(binaryByteString, 2);
-				binaryString = binaryString.substring(4);
+				binaryString = binaryString.substring(8);
 			}
 			else
 			{

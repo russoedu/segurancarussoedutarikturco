@@ -187,4 +187,41 @@ public class Util {
 		}
 		return returnValue;
 	}
+	
+	public static byte[] xor (byte[] a, byte[] b)
+	{
+		byte[] output = new byte[a.length];
+		
+		for (int i = 0; i < a.length; i++)
+			output[i] = (byte)(a[i] ^ b[i]);
+		
+		return output;
+	}
+	
+	public static byte[] multiplyByPx(byte[] input)
+	{
+		byte[] output = new byte[input.length];
+		
+		for (int i = 0; i < 9; i++)
+		{
+			output[i] = input[i + 1];
+		}
+		
+		output[9] = (byte)(input[10] ^ T1(input[0]));
+		output[10] = (byte)(input[11] ^ T0(input[0]));
+		output[11] = input[0];
+		
+		return output;
+	}
+	
+	static byte T1 (byte U)
+	{
+		return (byte)(U ^ ((U & 0xFF ) >>> 3) ^ ((U & 0xFF) >>> 5));
+	}
+	
+	static byte T0 (byte U)
+	{
+		return (byte)((U << 5) ^ (U << 3));
+	}
+	
 }

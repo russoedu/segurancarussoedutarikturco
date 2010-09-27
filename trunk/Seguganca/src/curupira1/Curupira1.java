@@ -15,7 +15,7 @@ public class Curupira1 implements BlockCipher {
 	private int numberOfRounds;
 	private byte keyEvolution[][][];
 	private boolean stepByStepDebug = false;
-	private boolean finalAnswerDebug = true;
+	private boolean finalAnswerDebug = false;
 
 	/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	 * Inherited abstract methods

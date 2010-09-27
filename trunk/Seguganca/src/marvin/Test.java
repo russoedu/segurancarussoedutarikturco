@@ -1,5 +1,6 @@
 package marvin;
 
+import util.Printer;
 import util.Util;
 import curupira1.Curupira1;
 
@@ -7,8 +8,8 @@ public class Test {
 	
 	public static void main(String[] args)
 	{
-		String message = "00";
-		String key = "000000000000000000000000";
+		String message = "0102030405060708090a0b0c0d";
+		String key = "0102030405060708090a0b0c";
 		
 		Curupira1 c = new Curupira1();
 		Marvin m = new Marvin();
@@ -23,7 +24,9 @@ public class Test {
 		m.update(M, M.length);
 		
 		byte[] buffer = new byte[12];
-		m.getTag(buffer, 12);
+		buffer = m.getTag(buffer, 4);
+		
+		Printer.printVectorAsPlainText("tag", buffer);
 		
 	}
 
