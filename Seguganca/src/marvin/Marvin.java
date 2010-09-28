@@ -66,6 +66,8 @@ public class Marvin implements MAC {
 
 	@Override
 	public void init(byte[] R) {
+		this.M = new byte[0][];
+		this.aLength = 0;
 		this.R = R;
 	}
 
