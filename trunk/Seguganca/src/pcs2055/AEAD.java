@@ -66,5 +66,5 @@ public interface AEAD {
 	 * If the tag parameter is null, a new one is allocated automatically, 
 	 * otherwise the input buffer is returned)
 	 */
-	byte[] getTag(byte[] tag);
+	byte[] getTag(byte[] tag, int tagBits);
 }

@@ -13,7 +13,12 @@ public class Marvin implements MAC {
 	byte[] R;
 
 	@Override
-	public byte[] getTag(byte[] tag, int tagBits) {
+	public byte[] getTag(byte[] tag, int tagBits){
+		return getTag(tag, tagBits, true);
+	}
+	
+	@Override
+	public byte[] getTag(byte[] tag, int tagBits, boolean encript) {
 		
 		byte[][] A = new byte[(aLength-1)/12 + 2][];
 		A[0] = new byte[n];
@@ -21,18 +26,20 @@ public class Marvin implements MAC {
 		
 		for (int i = 1; i <= (this.aLength-1)/12 + 1; i++)
 		{
-			byte[] paddedM = rpad(this.M[i - 1]);
+			byte[] paddedM = Util.rpad(this.M[i - 1], n);
 			A[i] = new byte[n];
 			this.cipher.Sct(A[i], Util.xor(paddedM, O));
 			A[0] = Util.xor(A[0], A[i]);
 			O = Util.multiplyByPx(O);
 		}
 
-		A[0] = Util.xor(A[0], Util.xor(this.R, Util.xor(rpad(rightBinAndSetOne((this.n - tagBits)*8)), lpad(leftBin(this.aLength*8)))));
+		A[0] = Util.xor(A[0], Util.xor(this.R, Util.xor(Util.rpad(rightBinAndSetOne((this.n - tagBits)*8), n), Util.lpad(leftBin(this.aLength*8), n))));
 	
-		byte[] ciphered = new byte[n];
+		if (!encript)
+			return A[0];
 		
-		this.cipher.encrypt(A[0], ciphered);
+		byte[] ciphered = new byte[n];
+			this.cipher.encrypt(A[0], ciphered);
 		
 		tag = new byte[tagBits];
 		
@@ -49,12 +56,17 @@ public class Marvin implements MAC {
 		byte[] c = new byte[1];
 		c[0] = 0x2A;
 	
-		byte[] paddedC = lpad(c);
+		byte[] paddedC = Util.lpad(c, n);
 		byte[] cipherC = new byte[n];
 
 		this.cipher.encrypt(paddedC, cipherC);
 
 		this.R = Util.xor(paddedC, cipherC);
+	}
+
+	@Override
+	public void init(byte[] R) {
+		this.R = R;
 	}
 
 	@Override
@@ -109,32 +121,6 @@ public class Marvin implements MAC {
 		this.M = newM;
 	}
 	
-	byte[] rpad(byte[] message)
-	{
-		byte[] rightPaddedMessage = new byte[n];
-		
-		for (int i = 0; i < message.length; i++)
-			rightPaddedMessage[i] = message[i];
-		for (int i = message.length; i < n; i++)
-			rightPaddedMessage[i] = 0;
-		
-		return rightPaddedMessage;
-	}
-	
-	byte[] lpad(byte[] message)
-	{
-		byte[] leftPaddedMessage = new byte[n];
-		
-		for (int i = 0; i < n - message.length; i++)
-			leftPaddedMessage[i] = 0;
-		for (int i = n - message.length; i < n; i++)
-		{
-			leftPaddedMessage[i] = message[n - i - 1];
-		}
-		
-		return leftPaddedMessage;
-	}
-	
 	
 	byte[] rightBinAndSetOne(int input)
 	{	
@@ -180,6 +166,7 @@ public class Marvin implements MAC {
 			output[size - i] = (byte)input;
 			
 			input = input >> 8;
+			i++;
 		}
 		
 		return output;
