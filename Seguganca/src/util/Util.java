@@ -228,5 +228,34 @@ public class Util {
 	{
 		return (byte)((U << 5) ^ (U << 3));
 	}
+
+	
+	public static byte[] lpad(byte[] message, int n)
+	{
+		byte[] leftPaddedMessage = new byte[n];
+		
+		for (int i = 0; i < n - message.length; i++)
+			leftPaddedMessage[i] = 0;
+		for (int i = n - message.length; i < n; i++)
+		{
+			leftPaddedMessage[i] = message[i + message.length - n];
+		}
+		
+		return leftPaddedMessage;
+	}
+	
+
+	
+	public static byte[] rpad(byte[] message, int n)
+	{
+		byte[] rightPaddedMessage = new byte[n];
+		
+		for (int i = 0; i < message.length; i++)
+			rightPaddedMessage[i] = message[i];
+		for (int i = message.length; i < n; i++)
+			rightPaddedMessage[i] = 0;
+		
+		return rightPaddedMessage;
+	}
 	
 }
