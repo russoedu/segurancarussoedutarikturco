@@ -14,8 +14,10 @@ public class LetterSoup implements AEAD {
 	BlockCipher cipher;
 	MAC mac;
 	byte[][] M = new byte[0][];
+	byte[] H = new byte[0];
 	final int n = 12;
 	int aLength;
+	int mLength;
 	
 	public static void main (String[] args)
 	{
@@ -28,14 +30,23 @@ public class LetterSoup implements AEAD {
 		String keyString = "000000000000000000000000";
 		byte[] key = Util.convertStringToVector(keyString);
 		l.setKey(key, 96);
-		String ivString = "0102030405060708090a0b0c";
+		String ivString = "000000000000000000000000";
 		byte[] iv = Util.convertStringToVector(ivString);
 		l.setIV(iv, 12);
-		String message = "00";
+		String message = "000000000000000000000000000000";
 		byte[] M = Util.convertStringToVector(message);
-		l.update(M, M.length);
+
+		Printer.printVectorAsPlainText("C", l.encrypt(M, M.length, new byte[12]));
 		
-		Printer.printVectorAsPlainText("teste", l.getTag(new byte[12], 12));
+		String associatedData = "000000000000000000000000000000";
+		byte[] H = Util.convertStringToVector(associatedData);
+		l.update(H, H.length);
+		
+		Printer.printVectorAsPlainText("T", l.getTag(new byte[12], 12));
+		
+		//l.update(M, M.length);
+		
+		//Printer.printVectorAsPlainText("teste", l.getTag(new byte[12], 12));
 	}
 	
 	@Override
@@ -46,36 +57,10 @@ public class LetterSoup implements AEAD {
 
 	@Override
 	public byte[] encrypt(byte[] mData, int mLength, byte[] cData) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public byte[] getTag(byte[] tag, int tagBits) {
-
-		byte[] C = lfsrc(this.R);
-		Printer.printVectorAsPlainText("C", C);
 		
-		mac.init(this.R);
-		mac.update(C, C.length);
-		byte[] A = mac.getTag(tag, tagBits, false);
+		this.mLength += mLength;
 		
-		byte[] T = new byte[n];
-		
-		cipher.encrypt(A, T);
-		
-		return T;
-	}
-
-	@Override
-	public void update(byte[] aData, int aLength) {
-		
-		if (aLength == 0)
-			return;
-		
-		this.aLength += aLength;
-		
-		byte[] vectorM = new byte[this.aLength];
+		byte[] vectorM = new byte[this.mLength];
 		int position = -1;
 		
 		for (int i = 0; i < this.M.length; i++)
@@ -87,17 +72,17 @@ public class LetterSoup implements AEAD {
 			}
 		}
 		
-		for (int i = 0; i < aLength; i++)
+		for (int i = 0; i < mLength; i++)
 		{
 			position++;
-			vectorM[position] = aData[i];
+			vectorM[position] = mData[i];
 		}
 		
-		byte[][] newM = new byte[(this.aLength - 1)/n + 1][];
+		byte[][] newM = new byte[(this.mLength - 1)/n + 1][];
 		
-		for (int i = 0; i <= (this.aLength - 1)/n; i++)
+		for (int i = 0; i <= (this.mLength - 1)/n; i++)
 		{
-			int size = (this.aLength - i*n) >= n ? n : this.aLength - i*n;
+			int size = (this.mLength - i*n) >= n ? n : this.mLength - i*n;
 			
 			newM[i] = new byte[size];
 			for (int j = 0; j < size; j++)
@@ -107,6 +92,47 @@ public class LetterSoup implements AEAD {
 		}
 		
 		this.M = newM;
+		
+		byte[] C = lfsrc(this.R);
+
+		mac.init(this.R);
+		mac.update(C, C.length);
+		
+		return C;
+		
+	}
+
+	@Override
+	public byte[] getTag(byte[] tag, int tagBits) {
+		
+		byte[] A = mac.getTag(tag, tagBits, false);
+		
+		if (H.length != 0)
+		{
+			byte[] L = new byte[12];
+			cipher.encrypt(new byte[12], L);
+			mac.init(L);
+			mac.update(this.H, this.H.length);
+			byte[] D = new byte[12];
+			D = mac.getTag(D, tagBits, false);
+			cipher.Sct(D, D);
+			A = Util.xor(A, D);
+		}
+		
+		byte[] T = new byte[n];
+		
+		cipher.encrypt(A, T);
+		
+		for (int i = 0; i < tagBits; i++)
+			tag[i] = T[i];
+		
+		return tag;
+	}
+
+	@Override
+	public void update(byte[] aData, int aLength) {
+		this.H = aData;
+		
 	}
 	
 	
