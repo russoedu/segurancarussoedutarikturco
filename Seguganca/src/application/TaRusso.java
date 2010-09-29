@@ -33,9 +33,7 @@ public class TaRusso {
 	
 	
 	
-	public static void main(String[] args) throws IOException {		
-		marvin.setCipher(curupira1);
-		
+	public static void main(String[] args) throws IOException {				
 		System.out
 				.println("************************************************************");
 		System.out
@@ -88,6 +86,7 @@ public class TaRusso {
 					if(variableAreFilled(true, true, false)){
 						String[] filePath = new String[2];
 						document = readDocument("Indique o caminho do arquivo para ser apenas autenticado: ", filePath);
+						marvin.setCipher(curupira1);
 						marvin.setKey(cipherKey, keyBits);
 						marvin.init();
 						
@@ -112,6 +111,7 @@ public class TaRusso {
 						document = readDocument("Indique o caminho do arquivo para ser validado: ", filePath);
 						macDocument = readDocument("Indique o caminho do arquivo \".mac\" para validar: ", filePath);
 						
+						marvin.setCipher(curupira1);
 						marvin.setKey(cipherKey, keyBits);
 						marvin.init();
 						
@@ -133,8 +133,41 @@ public class TaRusso {
 				//Selecionar um arquivo para ser cifrado e autenticado
 				//LetterSoup - encrypt(byte[] mData, int mLength, byte[] cData)
 				case 6:
-					System.out.print(instructions);
-					break;
+					if(variableAreFilled(true, true, true)){
+					String[] filePath = new String[2];
+					document = readDocument("Indique o caminho do arquivo para ser apenas cifrado e autenticado: ", filePath);
+					macDocument = readDocument("Indique o caminho do arquivo \".mac\" para validar: ", filePath);
+					
+					String sIV = "000000000000000000000000";
+					byte[] bIV = Util.convertStringToVector(sIV);
+
+					
+					letterSoup.setKey(cipherKey, keyBits);
+					letterSoup.setIV(bIV, ivLength);
+					letterSoup.setCipher(curupira1);
+					letterSoup.setMAC(marvin);
+					
+					byte[] cData = letterSoup.encrypt(document.getBytes(), document.length(), null);
+					
+//					letterSoup.update(???, aLength);
+					
+//					letterSoup.getTag(tag, tag.length * 8);
+
+					
+					//TODO - verificar se a implementação está correta
+					marvin.update(document.getBytes(), document.length());
+					byte[] buffer = new byte[12];
+					buffer = marvin.getTag(buffer, 4);
+					
+					//Save .mac file
+					filePath[0] = filePath[0].split("\\.")[0] + ".mac";
+					filePath[1] = filePath[1].split("\\.")[0] + ".mac";
+					
+					saveDocument("Autenticação executada com sucesso.\n" +
+							"Arquvio \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Printer.getVectorAsPlainText(buffer));
+				}
+				System.out.print(instructions);
+				break;
 				//Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado
 				//Marvin - update(byte[] aData, int aLength)
 				//Marvin - getTag(byte[] tag)
