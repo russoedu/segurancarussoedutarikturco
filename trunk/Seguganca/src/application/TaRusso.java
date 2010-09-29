@@ -3,6 +3,9 @@ package application;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Random;
 
 import lettersoup.LetterSoup;
 import marvin.Marvin;
@@ -11,11 +14,7 @@ import util.Util;
 import curupira1.Curupira1;
 
 public class TaRusso {
-	private static boolean debug = false;
-	
-	private static Curupira1 curupira1 = new Curupira1();
-	private static Marvin marvin = new Marvin();
-	private static LetterSoup letterSoup = new LetterSoup();
+	private static boolean debug = true;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -23,10 +22,11 @@ public class TaRusso {
 	
 	private static int keyBits = 0;
 	private static int ivLength = 0;
-	private static int aLength = 0;
+	private static int macLength = 0;
 	private static byte[] cipherKey = null;
 	private static String document;
 	private static String macDocument;
+	private static String ivDocument;
 	
 //	private static String cipherAndAutenticateDocument;
 	
@@ -84,46 +84,49 @@ public class TaRusso {
 				//Selecionar um arquivo para ser apenas autenticado
 				case 4:
 					if(variableAreFilled(true, true, false)){
+						Curupira1 curupira1 = new Curupira1();
+						Marvin marvin = new Marvin();
+						
 						String[] filePath = new String[2];
 						document = readDocument("Indique o caminho do arquivo para ser apenas autenticado: ", filePath);
 						marvin.setCipher(curupira1);
 						marvin.setKey(cipherKey, keyBits);
 						marvin.init();
 						
-						//TODO - verificar se a implementação está correta
 						marvin.update(document.getBytes(), document.length());
-						byte[] buffer = new byte[12];
-						buffer = marvin.getTag(buffer, 4);
+						byte[] buffer = new byte[macLength / 8];
+						buffer = marvin.getTag(buffer, macLength / 8);
 						
 						//Save .mac file
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
 						
 						saveDocument("Autenticação executada com sucesso.\n" +
-								"Arquvio \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Printer.getVectorAsPlainText(buffer));
+								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(buffer));
 					}
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo com seu respectivo MAC para ser validado
 				case 5:
 					if(variableAreFilled(true, true, false)){
+						Curupira1 curupira1 = new Curupira1();
+						Marvin marvin = new Marvin();
 						String[] filePath = new String[2];
 						document = readDocument("Indique o caminho do arquivo para ser validado: ", filePath);
-						macDocument = readDocument("Indique o caminho do arquivo \".mac\" para validar: ", filePath);
+						macDocument = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
 						
 						marvin.setCipher(curupira1);
 						marvin.setKey(cipherKey, keyBits);
 						marvin.init();
-						
-						//TODO - verificar se a implementação está correta
+
 						marvin.update(document.getBytes(), document.length());
-						byte[] buffer = new byte[12];
-						buffer = marvin.getTag(buffer, 4);
+						byte[] buffer = new byte[macLength / 8];
+						buffer = marvin.getTag(buffer, macLength / 8);
 						
 						if(debug)
-							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + macDocument + "?");
+							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + Printer.getVectorAsPlainText(macDocument.getBytes()) + "?");
 						
-						if(Printer.getVectorAsPlainText(buffer).equals(macDocument))
+						if(Printer.getVectorAsPlainText(buffer).equals(Printer.getVectorAsPlainText(macDocument.getBytes())))
 							System.out.println("Autenticação é válida: as tags são iguais.");
 						else
 							System.out.println("Autenticação inválida.");	
@@ -131,50 +134,91 @@ public class TaRusso {
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo para ser cifrado e autenticado
-				//LetterSoup - encrypt(byte[] mData, int mLength, byte[] cData)
 				case 6:
 					if(variableAreFilled(true, true, true)){
-					String[] filePath = new String[2];
-					document = readDocument("Indique o caminho do arquivo para ser cifrado e autenticado: ", filePath);
-					macDocument = readDocument("Indique o caminho do arquivo \".mac\" para validar: ", filePath);
-					
-					String sIV = "000000000000000000000000";
-					byte[] bIV = Util.convertStringToVector(sIV);
+						Curupira1 curupira1 = new Curupira1();
+						Marvin marvin = new Marvin();
+						LetterSoup letterSoup = new LetterSoup();
+						
+						String[] filePath = new String[2];
+						document = readDocument("Indique o caminho do arquivo para ser cifrado e autenticado: ", filePath);	
+						
+						letterSoup.setCipher(curupira1);
+						marvin.setCipher(curupira1);
+						letterSoup.setMAC(marvin);
+						letterSoup.setKey(cipherKey, keyBits);
+						
+						SecureRandom rand = new SecureRandom();
+						byte[] iv = new byte[ivLength / 8];
+						rand.nextBytes(iv);
+						
+						letterSoup.setIV(iv, ivLength / 8);
 
-					
-					letterSoup.setKey(cipherKey, keyBits);
-					letterSoup.setIV(bIV, ivLength);
-					letterSoup.setCipher(curupira1);
-					letterSoup.setMAC(marvin);
-					
-					
-					//Daqui pra frente eu não SEEEEI
-//					byte[] cData = letterSoup.encrypt(document.getBytes(), document.length(), null);
-					
-//					letterSoup.update(???, aLength);
-					
-//					letterSoup.getTag(tag, tag.length * 8);
+						byte[] cData = letterSoup.encrypt(document.getBytes(), document.getBytes().length, null);
+						byte[] buffer = new byte[macLength / 8];
+						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
+												
+						//Save .ciph file
+						filePath[0] = filePath[0].split("\\.")[0] + ".ciph";
+						filePath[1] = filePath[1].split("\\.")[0] + ".ciph";
+						saveDocument("Cifração executada com sucesso.\n" +
+								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(cData));
 
-					
-					//TODO - verificar se a implementação está correta
-//					marvin.update(document.getBytes(), document.length());
-//					byte[] buffer = new byte[12];
-//					buffer = marvin.getTag(buffer, 4);
-//					
-//					//Save .mac file
-//					filePath[0] = filePath[0].split("\\.")[0] + ".mac";
-//					filePath[1] = filePath[1].split("\\.")[0] + ".mac";
-//					
-//					saveDocument("Autenticação executada com sucesso.\n" +
-//							"Arquvio \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Printer.getVectorAsPlainText(buffer));
+						//Save .mac file
+						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
+						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
+						saveDocument("Autenticação executada com sucesso.\n" +
+								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(buffer));
+						
+						//Save .iv file
+						filePath[0] = filePath[0].split("\\.")[0] + ".iv";
+						filePath[1] = filePath[1].split("\\.")[0] + ".iv";
+						
+						saveDocument("Vetor de inicialização salvo com sucesso.\n" +
+								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(iv));
 				}
 				System.out.print(instructions);
 				break;
 				//Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado
-				//Marvin - update(byte[] aData, int aLength)
-				//Marvin - getTag(byte[] tag)
-				//LetterSoup - decrypt(byte[] cData, int cLength, byte[] mData)
 				case 7:
+					if(variableAreFilled(true, true, false)){
+						Curupira1 curupira1 = new Curupira1();
+						Marvin marvin = new Marvin();
+						LetterSoup letterSoup = new LetterSoup();
+						
+						String[] filePath = new String[2];
+						document = readDocument("Indique o caminho do arquivo \".ciph\" para ser decifrado: ", filePath);
+						macDocument = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+						ivDocument = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
+						
+						letterSoup.setCipher(curupira1);
+						marvin.setCipher(curupira1);
+						letterSoup.setMAC(marvin);
+						letterSoup.setKey(cipherKey, keyBits);
+						
+						//Set the Letter Soup IV
+						letterSoup.setIV(ivDocument.getBytes(), ivDocument.getBytes().length);
+						
+						byte[] mData = letterSoup.decrypt(document.getBytes(), document.getBytes().length, null);
+						byte[] buffer = new byte[macLength / 8];
+						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
+						
+						
+						if(debug)
+							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + Printer.getVectorAsPlainText(macDocument.getBytes()) + "?");
+						
+						if(Printer.getVectorAsPlainText(buffer).equals(Printer.getVectorAsPlainText(macDocument.getBytes()))){
+								System.out.println("Autenticação é válida: as tags são iguais.");
+								//Save .deciph file
+								filePath[0] = filePath[0].split("\\.")[0] + ".deciph";
+								filePath[1] = filePath[1].split("\\.")[0] + ".deciph";
+								
+								saveDocument("Decifração executada com sucesso.\n" +
+										"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(mData));
+						}
+						else
+							System.out.println("Autenticação inválida.");
+					}
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo para ser cifrado e autenticado, e um arquivo correspondente de dados associados para ser autenticado
@@ -345,7 +389,7 @@ public class TaRusso {
 				if (64 <= intValue && intValue <= 96) {
 
 					// Value set
-					aLength = intValue;
+					macLength = intValue;
 
 					// Output
 					System.out.println("IV terá " + intValue + " bits.");
@@ -451,7 +495,7 @@ public class TaRusso {
 				message += "\tVocê precisa definir uma senha antes (opção 3).\n";
 
 		if(aLengthOrIvVariable)
-			if(aLength == 0)
+			if(macLength == 0)
 				message += "\tVocê precisa escolher o tamanho de MAC e IV antes (opção 2).\n";
 		
 		if (!message.isEmpty()){

@@ -150,7 +150,9 @@ public class LetterSoup implements AEAD {
 	@Override
 	public byte[] getTag(byte[] tag, int tagBits) {
 		
-		byte[] A = mac.getTag(tag, tagBits, false);
+		int tagBytes = tagBits/8;
+		
+		byte[] A = mac.getTag(tag, tagBytes, false);
 		
 		if (H.length != 0)
 		{
@@ -159,7 +161,7 @@ public class LetterSoup implements AEAD {
 			mac.init(L);
 			mac.update(this.H, this.H.length);
 			byte[] D = new byte[12];
-			D = mac.getTag(D, tagBits, false);
+			D = mac.getTag(D, tagBytes, false);
 			cipher.Sct(D, D);
 			A = Util.xor(A, D);
 		}
@@ -168,7 +170,7 @@ public class LetterSoup implements AEAD {
 		
 		cipher.encrypt(A, T);
 		
-		for (int i = 0; i < tagBits; i++)
+		for (int i = 0; i < tagBytes; i++)
 			tag[i] = T[i];
 		
 		return tag;
