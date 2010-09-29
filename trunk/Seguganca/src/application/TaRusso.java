@@ -27,11 +27,6 @@ public class TaRusso {
 	private static String macDocument;
 	private static String ivDocument;
 	
-//	private static String cipherAndAutenticateDocument;
-	
-	
-	
-	
 	public static void main(String[] args) throws IOException {				
 		System.out
 				.println("************************************************************");
@@ -516,8 +511,7 @@ public class TaRusso {
 					// Output
 					System.out.println("Arquivo \"" + filePath[1]	+ "\" lido com sucesso.");
 					if (debug){
-						System.out.println("Conteúdo do arquivo:");
-						System.out.println(text);
+						System.out.println("Conteúdo do arquivo: " + text);
 					}
 
 					validValue = true;
@@ -552,10 +546,10 @@ public class TaRusso {
 
 					validValue = true;
 				} else {
-					System.out.print("Houve um erro na gravação. Enrando em loop infinito :P");
+					System.out.print("Houve um erro na gravação. Entrando em loop infinito :P");
 				}
 			} catch (Exception e) {
-				System.out.print("Houve um erro na gravação. Enrando em loop infinito :P");
+				System.out.print("Houve um erro na gravação. Entrando em loop infinito :P");
 			}
 		}
 	}
