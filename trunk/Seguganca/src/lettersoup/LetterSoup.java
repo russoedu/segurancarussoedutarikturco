@@ -33,16 +33,16 @@ public class LetterSoup implements AEAD {
 		String ivString = "000000000000000000000000";
 		byte[] iv = Util.convertStringToVector(ivString);
 		l.setIV(iv, 12);
-		String message = "000000000000000000000000000000";
+		String message = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		byte[] M = Util.convertStringToVector(message);
 
 		Printer.printVectorAsPlainText("C", l.encrypt(M, M.length, new byte[12]));
 		
-		String associatedData = "000000000000000000000000000000";
+		String associatedData = "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		byte[] H = Util.convertStringToVector(associatedData);
 		l.update(H, H.length);
 		
-		Printer.printVectorAsPlainText("T", l.getTag(new byte[12], 12));
+		Printer.printVectorAsPlainText("T", l.getTag(new byte[8], 8));
 		
 		//l.update(M, M.length);
 		
