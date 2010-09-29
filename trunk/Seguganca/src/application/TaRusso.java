@@ -135,7 +135,7 @@ public class TaRusso {
 				case 6:
 					if(variableAreFilled(true, true, true)){
 					String[] filePath = new String[2];
-					document = readDocument("Indique o caminho do arquivo para ser apenas cifrado e autenticado: ", filePath);
+					document = readDocument("Indique o caminho do arquivo para ser cifrado e autenticado: ", filePath);
 					macDocument = readDocument("Indique o caminho do arquivo \".mac\" para validar: ", filePath);
 					
 					String sIV = "000000000000000000000000";
@@ -147,7 +147,9 @@ public class TaRusso {
 					letterSoup.setCipher(curupira1);
 					letterSoup.setMAC(marvin);
 					
-					byte[] cData = letterSoup.encrypt(document.getBytes(), document.length(), null);
+					
+					//Daqui pra frente eu não SEEEEI
+//					byte[] cData = letterSoup.encrypt(document.getBytes(), document.length(), null);
 					
 //					letterSoup.update(???, aLength);
 					
@@ -155,16 +157,16 @@ public class TaRusso {
 
 					
 					//TODO - verificar se a implementação está correta
-					marvin.update(document.getBytes(), document.length());
-					byte[] buffer = new byte[12];
-					buffer = marvin.getTag(buffer, 4);
-					
-					//Save .mac file
-					filePath[0] = filePath[0].split("\\.")[0] + ".mac";
-					filePath[1] = filePath[1].split("\\.")[0] + ".mac";
-					
-					saveDocument("Autenticação executada com sucesso.\n" +
-							"Arquvio \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Printer.getVectorAsPlainText(buffer));
+//					marvin.update(document.getBytes(), document.length());
+//					byte[] buffer = new byte[12];
+//					buffer = marvin.getTag(buffer, 4);
+//					
+//					//Save .mac file
+//					filePath[0] = filePath[0].split("\\.")[0] + ".mac";
+//					filePath[1] = filePath[1].split("\\.")[0] + ".mac";
+//					
+//					saveDocument("Autenticação executada com sucesso.\n" +
+//							"Arquvio \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Printer.getVectorAsPlainText(buffer));
 				}
 				System.out.print(instructions);
 				break;
