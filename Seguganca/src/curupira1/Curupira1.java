@@ -1,6 +1,6 @@
 package curupira1;
 
-import pcs2055.BlockCipher;
+import interfaces.BlockCipher;
 import util.Util;
 import util.Printer;
 
