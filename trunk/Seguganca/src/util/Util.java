@@ -15,9 +15,6 @@ import java.io.IOException;
 public class Util {
 	/**
 	 * Convert a plain text String to an array of bytes
-	 * 
-	 * @param stringValue
-	 * @return array of bytes
 	 */
 	public static byte[] convertStringToVector(String plainText){
 			int size = plainText.length();
@@ -35,6 +32,9 @@ public class Util {
 			return vectorBlock;
 	}
 
+	/**
+	 * Convert a single character to a byte
+	 */
 	public static byte stringToByte(String sByte) {
 		if (sByte.equals("0"))
 			return (byte) 0x00;
@@ -70,10 +70,16 @@ public class Util {
 			return (byte) 0x0F;
 	}
 
+	/**
+	 * Convert a single byte to it's hexadecimal value
+	 */
 	public static String byteToHex(byte b) {
 		return Integer.toString((b & 0xFF) + 0x100, 16).substring(1);
 	}
 
+	/**
+	 * Convert an array of bytes to a string
+	 */
 	public static String byteToHex(byte[] b) {
 		String result = "";
 		for (int i = 0; i < b.length; i++)
@@ -81,6 +87,9 @@ public class Util {
 		return result;
 	}
 
+	/**
+	 * Convert a block (array of bytes) to a matrix representation
+	 */
 	public static void blockToMatrix(byte[] block, byte[][] matrix,
 			boolean columnMapping) {
 		int size = block.length / 3;
@@ -99,6 +108,9 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Convert a matrix to a block representation
+	 */
 	public static void matrixToBlock(byte[] block, byte[][] matrix,
 			boolean columnMapping) {
 		int size = matrix[0].length;
@@ -117,12 +129,18 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Copy a matrix
+	 */
 	public static void copyMatrix(byte[][] in, byte[][] out) {
 		for (int i = 0; i < in.length; i++)
 			for (int j = 0; j < in[i].length; j++)
 				out[i][j] = in[i][j];
 	}
 
+	/**
+	 * Read a file and return it's content to a string
+	 */
 	public static String readFile(String filePath)    throws java.io.IOException{
         StringBuffer fileData = new StringBuffer(1000);
         BufferedReader reader = new BufferedReader(
@@ -137,6 +155,9 @@ public class Util {
 
 	}
 	
+	/**
+	 * Save a  string text to a file
+	 */
 	public static boolean saveFile(String filePath, String text) throws IOException {
 		boolean returnValue = false;
 		File file = new File(filePath);
@@ -170,6 +191,9 @@ public class Util {
 		return returnValue;
 	}
 	
+	/**
+	 * Computes a XOR operation between thwo byte arrays 
+	 */
 	public static byte[] xor (byte[] a, byte[] b)
 	{
 		byte[] output = new byte[a.length];
@@ -232,7 +256,10 @@ public class Util {
 		return rightPaddedMessage;
 	}
 	
-	public static byte[] binaryStringToByte(String binaryString) {
+	/**
+	 * Convert a binary string to a byte array
+	 */
+	public static byte[] binaryStringToByteArray(String binaryString) {
 		int stringSize = binaryString.length() / 8;
 		byte[] byteData = new byte[stringSize];
 		
@@ -242,7 +269,10 @@ public class Util {
 		return byteData;
 	}
 	
-	public static String byteToBinaryString(byte[] byteData){
+	/**
+	 * Convert a byte array to a binary string
+	 */
+	public static String byteArrayToBinaryString(byte[] byteData){
 		  String binaryString = "";
 		  //Iterate over the bytes vector
 		  for (int i = 0; i < byteData.length; i++){
@@ -251,6 +281,10 @@ public class Util {
 		  }
 		  return binaryString;
 	}
+	
+	/**
+	 * Convert a int representation of a byte to a binary string 
+	 */
 	public static String intByteRepresentationToBinaryString(int intByteRepresentation){
 		String binaryString = intValueToBinaryString(intByteRepresentation);
 		int size = 8 - binaryString.length();
@@ -261,6 +295,9 @@ public class Util {
 		return binaryString;
 	}
 	
+	/**
+	 * Convert a int to a binary string
+	 */
 	public static String intValueToBinaryString(int value)
 	{
 		if(value != 0){
