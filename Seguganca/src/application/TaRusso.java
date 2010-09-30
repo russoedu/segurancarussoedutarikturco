@@ -77,7 +77,7 @@ public class TaRusso {
 					break;
 				//Selecionar um arquivo para ser apenas autenticado
 				case 4:
-					if(variableAreFilled(true, true, false)){
+					if(variableAreFilled(true, true, true)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						
@@ -102,7 +102,7 @@ public class TaRusso {
 					break;
 				//Selecionar um arquivo com seu respectivo MAC para ser validado
 				case 5:
-					if(variableAreFilled(true, true, false)){
+					if(variableAreFilled(true, true, true)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						String[] filePath = new String[2];

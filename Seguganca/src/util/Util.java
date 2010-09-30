@@ -143,21 +143,18 @@ public class Util {
 				out[i][j] = in[i][j];
 	}
 
-	public static String readFile(String filePath) {
-		String text = "";
-		try {
-			FileReader reader = new FileReader(filePath);
-			BufferedReader in = new BufferedReader(reader);
-			String str;
-			while ((str = in.readLine()) != null){
-				text += str;
-				}
-			in.close();
-			}
-			catch (IOException e){
-				text = null;
-			} 
-		return text;
+	public static String readFile(String filePath)    throws java.io.IOException{
+        StringBuffer fileData = new StringBuffer(1000);
+        BufferedReader reader = new BufferedReader(
+                new FileReader(filePath));
+        char[] buf = new char[1024];
+        int numRead=0;
+        while((numRead=reader.read(buf)) != -1){
+            fileData.append(buf, 0, numRead);
+        }
+        reader.close();
+        return fileData.toString();
+
 	}
 	
 	public static boolean saveFile(String filePath, String text) throws IOException {
@@ -229,7 +226,6 @@ public class Util {
 		return (byte)((U << 5) ^ (U << 3));
 	}
 
-	
 	public static byte[] lpad(byte[] message, int n)
 	{
 		byte[] leftPaddedMessage = new byte[n];
@@ -243,8 +239,6 @@ public class Util {
 		
 		return leftPaddedMessage;
 	}
-	
-
 	
 	public static byte[] rpad(byte[] message, int n)
 	{
