@@ -1,4 +1,4 @@
-package pcs2055;
+package interfaces;
 
 public interface MAC {
 	/** 
