@@ -162,35 +162,35 @@ public class Util {
 	 */
 	public static boolean saveFile(String filePath, String text) throws IOException {
 		boolean returnValue = true;
-		writeToFile(text, filePath);
-//		File file = new File(filePath);
-//		FileWriter writer = new FileWriter(file);
-//		
-//		//Unix
-//		if(filePath.contains("/")){
-//			filePath = filePath.split("/")[filePath.split("/").length - 1];
-//		}
-//		//Windows
-//		else if(filePath.contains("\\")){
-//			filePath = filePath.split("\\")[filePath.split("/").length - 1];		
-//		}
-//		
-//		try {			
-//			writer.write(text);
-//			returnValue = true;
-//		} catch (FileNotFoundException e) {
-//			returnValue = false;
-//		} catch (IOException e) {
-//			returnValue = false;
-//		} finally {
-//			try {
-//				if (writer != null) {
-//					writer.close();
-//				}
-//			} catch (IOException e) {
-//				returnValue = false;
-//			}
-//		}
+		//writeToFile(text, filePath);
+		File file = new File(filePath);
+		FileWriter writer = new FileWriter(file);
+		
+		//Unix
+		if(filePath.contains("/")){
+			filePath = filePath.split("/")[filePath.split("/").length - 1];
+		}
+		//Windows
+		else if(filePath.contains("\\")){
+			filePath = filePath.split("\\")[filePath.split("/").length - 1];		
+		}
+		
+		try {			
+			writer.write(text);
+			returnValue = true;
+		} catch (FileNotFoundException e) {
+			returnValue = false;
+		} catch (IOException e) {
+			returnValue = false;
+		} finally {
+			try {
+				if (writer != null) {
+					writer.close();
+				}
+			} catch (IOException e) {
+				returnValue = false;
+			}
+		}
 		return returnValue;
 	}
 	
@@ -277,52 +277,52 @@ public class Util {
 	/**
 	 * Convert a binary string to a byte array
 	 */
-	public static byte[] binaryStringToByteArray(String binaryString) {
-		int stringSize = binaryString.length() / 8;
-		byte[] byteData = new byte[stringSize];
-		
-		for (int i = 0; i < stringSize; i++){
-			byteData[i] = (byte)Integer.parseInt(binaryString.substring(i * 8, i * 8 + 8), 2);
-		}
-		return byteData;
-	}
-	
-	/**
-	 * Convert a byte array to a binary string
-	 */
-	public static String byteArrayToBinaryString(byte[] byteData){
-		  String binaryString = "";
-		  //Iterate over the bytes vector
-		  for (int i = 0; i < byteData.length; i++){
-			  //Convert each byte to a bit string
-			  binaryString += intByteRepresentationToBinaryString((int)(byteData[i] & 0xFF));
-		  }
-		  return binaryString;
-	}
+//	public static byte[] binaryStringToByteArray(String binaryString) {
+//		int stringSize = binaryString.length() / 8;
+//		byte[] byteData = new byte[stringSize];
+//		
+//		for (int i = 0; i < stringSize; i++){
+//			byteData[i] = (byte)Integer.parseInt(binaryString.substring(i * 8, i * 8 + 8), 2);
+//		}
+//		return byteData;
+//	}
+//	
+//	/**
+//	 * Convert a byte array to a binary string
+//	 */
+//	public static String byteArrayToBinaryString(byte[] byteData){
+//		  String binaryString = "";
+//		  //Iterate over the bytes vector
+//		  for (int i = 0; i < byteData.length; i++){
+//			  //Convert each byte to a bit string
+//			  binaryString += intByteRepresentationToBinaryString((int)(byteData[i] & 0xFF));
+//		  }
+//		  return binaryString;
+//	}
 	
 	/**
 	 * Convert a int representation of a byte to a binary string 
 	 */
-	public static String intByteRepresentationToBinaryString(int intByteRepresentation){
-		String binaryString = intValueToBinaryString(intByteRepresentation);
-		int size = 8 - binaryString.length();
-		
-		for (int i = 0; i < size; i++)
-			binaryString = "0" + binaryString;
-		
-		return binaryString;
-	}
+//	public static String intByteRepresentationToBinaryString(int intByteRepresentation){
+//		String binaryString = intValueToBinaryString(intByteRepresentation);
+//		int size = 8 - binaryString.length();
+//		
+//		for (int i = 0; i < size; i++)
+//			binaryString = "0" + binaryString;
+//		
+//		return binaryString;
+//	}
 	
 	/**
 	 * Convert a int to a binary string
 	 */
-	public static String intValueToBinaryString(int value)
-	{
-		if(value != 0){
-			return Integer.toBinaryString(value);
-		}
-		return "";
-	}
+//	public static String intValueToBinaryString(int value)
+//	{
+//		if(value != 0){
+//			return Integer.toBinaryString(value);
+//		}
+//		return "";
+//	}
 
 
 

@@ -95,7 +95,7 @@ public class TaRusso {
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
 						
-						saveDocument("Arquivo foi autenticado e \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.\n", filePath[0], Util.byteArrayToBinaryString(buffer));
+						saveDocument("Arquivo foi autenticado e \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.\n", filePath[0], new String(buffer));
 					}
 					System.out.print(instructions);
 					break;
@@ -116,7 +116,7 @@ public class TaRusso {
 						byte[] buffer = new byte[macLength / 8];
 						buffer = marvin.getTag(buffer, macLength / 8);
 						
-						String savedMac = Printer.getVectorAsPlainText(Util.binaryStringToByteArray(macDocument));
+						String savedMac = Printer.getVectorAsPlainText(macDocument.getBytes());
 						
 						if(debug)
 							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + savedMac + "?");
@@ -159,18 +159,18 @@ public class TaRusso {
 						//Save .ciph file
 						filePath[0] = filePath[0].split("\\.")[0] + ".ciph";
 						filePath[1] = filePath[1].split("\\.")[0] + ".ciph";
-						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.", filePath[0], Util.byteArrayToBinaryString(cData));
+						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.", filePath[0], new String(cData));
 
 						//Save .mac file
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
-						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma do arquivo original.", filePath[0], Util.byteArrayToBinaryString(buffer));
+						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma do arquivo original.", filePath[0], new String(buffer));
 						
 						//Save .iv file
 						filePath[0] = filePath[0].split("\\.")[0] + ".iv";
 						filePath[1] = filePath[1].split("\\.")[0] + ".iv";
 						
-						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma do arquivo original\n.", filePath[0], Util.byteArrayToBinaryString(iv));
+						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma do arquivo original\n.", filePath[0], new String(iv));
 				}
 				System.out.print(instructions);
 				break;
@@ -191,9 +191,9 @@ public class TaRusso {
 						letterSoup.setMAC(marvin);
 						letterSoup.setKey(cipherKey, keyBits);
 						
-						byte[] savedIv = Util.binaryStringToByteArray(ivDocument);
-						byte[]cData = Util.binaryStringToByteArray(document);
-						String savedMac = Printer.getVectorAsPlainText(Util.binaryStringToByteArray(macDocument));
+						byte[] savedIv = ivDocument.getBytes();
+						byte[]cData = document.getBytes();
+						String savedMac = Printer.getVectorAsPlainText(macDocument.getBytes());
 
 						letterSoup.setIV(savedIv, savedIv.length);
 						
@@ -253,18 +253,18 @@ public class TaRusso {
 						//Save .ciph file
 						filePath[0] = filePath[0].split("\\.")[0] + ".ciph";
 						filePath[1] = filePath[1].split("\\.")[0] + ".ciph";
-						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Util.byteArrayToBinaryString(cData));
+						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(cData));
 
 						//Save .mac file
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
-						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Util.byteArrayToBinaryString(buffer));
+						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(buffer));
 						
 						//Save .iv file
 						filePath[0] = filePath[0].split("\\.")[0] + ".iv";
 						filePath[1] = filePath[1].split("\\.")[0] + ".iv";
 						
-						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.\n", filePath[0], Util.byteArrayToBinaryString(iv));
+						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.\n", filePath[0], new String(iv));
 				}
 					System.out.print(instructions);
 					break;
@@ -288,9 +288,9 @@ public class TaRusso {
 						letterSoup.setMAC(marvin);
 						letterSoup.setKey(cipherKey, keyBits);
 						
-						byte[] savedIv = Util.binaryStringToByteArray(ivDocument);
-						byte[]cData = Util.binaryStringToByteArray(document);
-						String savedMac = Printer.getVectorAsPlainText(Util.binaryStringToByteArray(macDocument));
+						byte[] savedIv = ivDocument.getBytes();
+						byte[]cData = document.getBytes();
+						String savedMac = Printer.getVectorAsPlainText(macDocument.getBytes());
 						
 						letterSoup.setIV(savedIv, savedIv.length);
 						
@@ -506,7 +506,7 @@ public class TaRusso {
 				}
 				//Windows
 				else if(filePath[0].contains("\\")){
-					filePath[1] = filePath[0].split("\\")[filePath[0].split("/").length - 1];		
+					filePath[1] = filePath[0].split("\\")[filePath[0].split("\\").length - 1];		
 				}
 				
 				// Validation
