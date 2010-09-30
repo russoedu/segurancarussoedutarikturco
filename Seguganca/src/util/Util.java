@@ -1,13 +1,9 @@
 package util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * 
@@ -18,20 +14,20 @@ public class Util {
 	/**
 	 * Convert a plain text String to an array of bytes
 	 */
-	public static byte[] convertStringToVector(String plainText){
-			int size = plainText.length();
-			byte[] vectorBlock = new byte[size / 2];
-			for (int i = 0; i < size; i += 2) {
-				String sByte1 = plainText.substring(i, i + 1);
-				String sByte2 = plainText.substring(i + 1, i + 2);
+	public static byte[] convertStringToVector(String plainText) {
+		int size = plainText.length();
+		byte[] vectorBlock = new byte[size / 2];
+		for (int i = 0; i < size; i += 2) {
+			String sByte1 = plainText.substring(i, i + 1);
+			String sByte2 = plainText.substring(i + 1, i + 2);
 
-				int byte1 = (stringToByte(sByte1) << (byte) 0x04);
-				;
-				int byte2 = stringToByte(sByte2);
+			int byte1 = (stringToByte(sByte1) << (byte) 0x04);
+			;
+			int byte2 = stringToByte(sByte2);
 
-				vectorBlock[i / 2] = (byte) (byte1 ^ byte2);
-			}
-			return vectorBlock;
+			vectorBlock[i / 2] = (byte) (byte1 ^ byte2);
+		}
+		return vectorBlock;
 	}
 
 	/**
@@ -140,175 +136,77 @@ public class Util {
 				out[i][j] = in[i][j];
 	}
 
-	/**
-	 * Read a file and return it's content to a string
-	 */
-	public static String readFile(String filePath)    throws java.io.IOException{
-        StringBuffer fileData = new StringBuffer(1000);
-        BufferedReader reader = new BufferedReader(
-                new FileReader(filePath));
-        char[] buf = new char[1024];
-        int numRead=0;
-        while((numRead=reader.read(buf)) != -1){
-            fileData.append(buf, 0, numRead);
-        }
-        reader.close();
-        return fileData.toString();
-
-	}
-	
-	/**
-	 * Save a  string text to a file
-	 */
-	public static boolean saveFile(String filePath, String text) throws IOException {
-		boolean returnValue = false;
+	public static byte[] readFile(String filePath) throws java.io.IOException {
 		File file = new File(filePath);
-		FileWriter writer = new FileWriter(file);
-		
-		//Unix
-		if(filePath.contains("/")){
-			filePath = filePath.split("/")[filePath.split("/").length - 1];
-		}
-		//Windows
-		else if(filePath.contains("\\")){
-			filePath = filePath.split("\\")[filePath.split("/").length - 1];		
-		}
-		
-		try {			
-			writer.write(text);
-			returnValue = true;
-		} catch (FileNotFoundException e) {
-			returnValue = false;
-		} catch (IOException e) {
-			returnValue = false;
-		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-				returnValue = false;
-			}
-		}
-		return returnValue;
+		FileInputStream fis = new FileInputStream(file);
+		byte[] bytes = new byte[(int) file.length()];
+		fis.read(bytes, 0, (int) file.length());
+		return bytes;
 	}
-	
+
+	public static boolean saveFile(String filePath, byte[] data)
+			throws IOException {
+		File file = new File(filePath);
+		FileOutputStream fis = new FileOutputStream(file);
+		fis.write(data);
+		fis.close();
+		return true;
+	}
+
 	/**
-	 * Computes a XOR operation between thwo byte arrays 
+	 * Computes a XOR operation between thwo byte arrays
 	 */
-	public static byte[] xor (byte[] a, byte[] b)
-	{
+	public static byte[] xor(byte[] a, byte[] b) {
 		byte[] output = new byte[a.length];
-		
+
 		for (int i = 0; i < a.length; i++)
-			output[i] = (byte)(a[i] ^ b[i]);
-		
+			output[i] = (byte) (a[i] ^ b[i]);
+
 		return output;
 	}
-	
-	public static byte[] multiplyByPx(byte[] input)
-	{
+
+	public static byte[] multiplyByPx(byte[] input) {
 		byte[] output = new byte[input.length];
-		
-		for (int i = 0; i < 9; i++)
-		{
+
+		for (int i = 0; i < 9; i++) {
 			output[i] = input[i + 1];
 		}
-		
-		output[9] = (byte)(input[10] ^ T1(input[0]));
-		output[10] = (byte)(input[11] ^ T0(input[0]));
+
+		output[9] = (byte) (input[10] ^ T1(input[0]));
+		output[10] = (byte) (input[11] ^ T0(input[0]));
 		output[11] = input[0];
-		
+
 		return output;
 	}
-	
-	static byte T1 (byte U)
-	{
-		return (byte)(U ^ ((U & 0xFF ) >>> 3) ^ ((U & 0xFF) >>> 5));
-	}
-	
-	static byte T0 (byte U)
-	{
-		return (byte)((U << 5) ^ (U << 3));
+
+	static byte T1(byte U) {
+		return (byte) (U ^ ((U & 0xFF) >>> 3) ^ ((U & 0xFF) >>> 5));
 	}
 
-	public static byte[] lpad(byte[] message, int n)
-	{
+	static byte T0(byte U) {
+		return (byte) ((U << 5) ^ (U << 3));
+	}
+
+	public static byte[] lpad(byte[] message, int n) {
 		byte[] leftPaddedMessage = new byte[n];
-		
+
 		for (int i = 0; i < n - message.length; i++)
 			leftPaddedMessage[i] = 0;
-		for (int i = n - message.length; i < n; i++)
-		{
+		for (int i = n - message.length; i < n; i++) {
 			leftPaddedMessage[i] = message[i + message.length - n];
 		}
-		
+
 		return leftPaddedMessage;
 	}
-	
-	public static byte[] rpad(byte[] message, int n)
-	{
+
+	public static byte[] rpad(byte[] message, int n) {
 		byte[] rightPaddedMessage = new byte[n];
-		
+
 		for (int i = 0; i < message.length; i++)
 			rightPaddedMessage[i] = message[i];
 		for (int i = message.length; i < n; i++)
 			rightPaddedMessage[i] = 0;
-		
+
 		return rightPaddedMessage;
 	}
-	
-	/**
-	 * Convert a binary string to a byte array
-	 */
-//	public static byte[] binaryStringToByteArray(String binaryString) {
-//		int stringSize = binaryString.length() / 8;
-//		byte[] byteData = new byte[stringSize];
-//		
-//		for (int i = 0; i < stringSize; i++){
-//			byteData[i] = (byte)Integer.parseInt(binaryString.substring(i * 8, i * 8 + 8), 2);
-//		}
-//		return byteData;
-//	}
-//	
-//	/**
-//	 * Convert a byte array to a binary string
-//	 */
-//	public static String byteArrayToBinaryString(byte[] byteData){
-//		  String binaryString = "";
-//		  //Iterate over the bytes vector
-//		  for (int i = 0; i < byteData.length; i++){
-//			  //Convert each byte to a bit string
-//			  binaryString += intByteRepresentationToBinaryString((int)(byteData[i] & 0xFF));
-//		  }
-//		  return binaryString;
-//	}
-	
-	/**
-	 * Convert a int representation of a byte to a binary string 
-	 */
-//	public static String intByteRepresentationToBinaryString(int intByteRepresentation){
-//		String binaryString = intValueToBinaryString(intByteRepresentation);
-//		int size = 8 - binaryString.length();
-//		
-//		for (int i = 0; i < size; i++)
-//			binaryString = "0" + binaryString;
-//		
-//		return binaryString;
-//	}
-	
-	/**
-	 * Convert a int to a binary string
-	 */
-//	public static String intValueToBinaryString(int value)
-//	{
-//		if(value != 0){
-//			return Integer.toBinaryString(value);
-//		}
-//		return "";
-//	}
-
-
-
-
 }
