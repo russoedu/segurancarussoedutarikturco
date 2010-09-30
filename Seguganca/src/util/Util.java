@@ -253,9 +253,9 @@ public class Util {
 	}
 	public static String intByteRepresentationToBinaryString(int intByteRepresentation){
 		String binaryString = intValueToBinaryString(intByteRepresentation);
-		int diff = 8 - binaryString.length();
+		int size = 8 - binaryString.length();
 		
-		for (int i = 0; i < diff; i++)
+		for (int i = 0; i < size; i++)
 			binaryString = "0" + binaryString;
 		
 		return binaryString;
