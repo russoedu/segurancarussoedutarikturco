@@ -161,8 +161,7 @@ public class Util {
 	 * Save a  string text to a file
 	 */
 	public static boolean saveFile(String filePath, String text) throws IOException {
-		boolean returnValue = true;
-		//writeToFile(text, filePath);
+		boolean returnValue = false;
 		File file = new File(filePath);
 		FileWriter writer = new FileWriter(file);
 		
@@ -194,23 +193,8 @@ public class Util {
 		return returnValue;
 	}
 	
-	private static String writeToFile(String s, String filename) 
-	{                  
-	   try {
-	      File myFile = new File(filename);       
-	      FileOutputStream outStream = new FileOutputStream(myFile);
-	      PrintWriter out = new PrintWriter(outStream); 
-	      out.println(s);
-	      out.close();
-	      return "File " + filename + " successfully written.";
-	   } catch(Exception e) {
-	      System.out.println("Error writing to file " + filename + "\n"+e);
-	      return "Error writing file " + filename ;
-	   }
-	}
-	
 	/**
-	 * Computes a XOR operation between two byte arrays 
+	 * Computes a XOR operation between thwo byte arrays 
 	 */
 	public static byte[] xor (byte[] a, byte[] b)
 	{
