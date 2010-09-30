@@ -3,9 +3,11 @@ package util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 
@@ -159,40 +161,56 @@ public class Util {
 	 * Save a  string text to a file
 	 */
 	public static boolean saveFile(String filePath, String text) throws IOException {
-		boolean returnValue = false;
-		File file = new File(filePath);
-		FileWriter writer = new FileWriter(file);
-		
-		//Unix
-		if(filePath.contains("/")){
-			filePath = filePath.split("/")[filePath.split("/").length - 1];
-		}
-		//Windows
-		else if(filePath.contains("\\")){
-			filePath = filePath.split("\\")[filePath.split("/").length - 1];		
-		}
-		
-		try {			
-			writer.write(text);
-			returnValue = true;
-		} catch (FileNotFoundException e) {
-			returnValue = false;
-		} catch (IOException e) {
-			returnValue = false;
-		} finally {
-			try {
-				if (writer != null) {
-					writer.close();
-				}
-			} catch (IOException e) {
-				returnValue = false;
-			}
-		}
+		boolean returnValue = true;
+		writeToFile(text, filePath);
+//		File file = new File(filePath);
+//		FileWriter writer = new FileWriter(file);
+//		
+//		//Unix
+//		if(filePath.contains("/")){
+//			filePath = filePath.split("/")[filePath.split("/").length - 1];
+//		}
+//		//Windows
+//		else if(filePath.contains("\\")){
+//			filePath = filePath.split("\\")[filePath.split("/").length - 1];		
+//		}
+//		
+//		try {			
+//			writer.write(text);
+//			returnValue = true;
+//		} catch (FileNotFoundException e) {
+//			returnValue = false;
+//		} catch (IOException e) {
+//			returnValue = false;
+//		} finally {
+//			try {
+//				if (writer != null) {
+//					writer.close();
+//				}
+//			} catch (IOException e) {
+//				returnValue = false;
+//			}
+//		}
 		return returnValue;
 	}
 	
+	private static String writeToFile(String s, String filename) 
+	{                  
+	   try {
+	      File myFile = new File(filename);       
+	      FileOutputStream outStream = new FileOutputStream(myFile);
+	      PrintWriter out = new PrintWriter(outStream); 
+	      out.println(s);
+	      out.close();
+	      return "File " + filename + " successfully written.";
+	   } catch(Exception e) {
+	      System.out.println("Error writing to file " + filename + "\n"+e);
+	      return "Error writing file " + filename ;
+	   }
+	}
+	
 	/**
-	 * Computes a XOR operation between thwo byte arrays 
+	 * Computes a XOR operation between two byte arrays 
 	 */
 	public static byte[] xor (byte[] a, byte[] b)
 	{
