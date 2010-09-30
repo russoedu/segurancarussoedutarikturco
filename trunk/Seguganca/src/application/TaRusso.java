@@ -31,7 +31,7 @@ public class TaRusso {
 		System.out
 				.println("************************************************************");
 		System.out
-				.println("Bem vindo ao Projeto Tarusso, de Eduardo Russo e Tarik Feres");
+				.println("Bem vindo ao Projeto TaRusso, de Eduardo Russo e Tarik Feres");
 		System.out
 				.println("************************************************************\n");
 
@@ -50,7 +50,7 @@ public class TaRusso {
 				"[7] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado\n" +
 				"[8] Selecionar um arquivo para ser cifrado e autenticado, e um arquivo correspondente de dados associados para ser autenticado\n" +
 				"[9] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado, um arquivo correspondente de dados associados para ser autenticado\n" +
-				"[0] Fnalizar programa\n" +
+				"[0] Finalizar programa\n" +
 				"Opção: ";
 		boolean validValue = false;
 		int key;
@@ -67,7 +67,7 @@ public class TaRusso {
 				//Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco"
 				case 2:
 					ivSizeInput();
-					aLengthInput();
+					macLengthInput();
 					System.out.print(instructions);
 					break;
 				//Escolher uma senha alfanumérica
@@ -95,8 +95,7 @@ public class TaRusso {
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
 						
-						saveDocument("Autenticação executada com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(buffer));
+						saveDocument("Arquivo foi autenticado e \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.\n", filePath[0], Util.byteToBinaryString(buffer));
 					}
 					System.out.print(instructions);
 					break;
@@ -117,13 +116,15 @@ public class TaRusso {
 						byte[] buffer = new byte[macLength / 8];
 						buffer = marvin.getTag(buffer, macLength / 8);
 						
-						if(debug)
-							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + Printer.getVectorAsPlainText(macDocument.getBytes()) + "?");
+						String savedMac = Printer.getVectorAsPlainText(Util.binaryStringToByte(macDocument));
 						
-						if(Printer.getVectorAsPlainText(buffer).equals(Printer.getVectorAsPlainText(macDocument.getBytes())))
-							System.out.println("Autenticação é válida: as tags são iguais.");
+						if(debug)
+							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + savedMac + "?");
+						
+						if(Printer.getVectorAsPlainText(buffer).equals(savedMac))
+							System.out.println("Qapla'! O arquivo foi validado!.\n");
 						else
-							System.out.println("Autenticação inválida.");	
+							System.out.println("Autenticação inválida: as tags não são iguais.\n");	
 					}
 					System.out.print(instructions);
 					break;
@@ -145,31 +146,31 @@ public class TaRusso {
 						SecureRandom rand = new SecureRandom();
 						byte[] iv = new byte[ivLength / 8];
 						rand.nextBytes(iv);
-						
+
 						letterSoup.setIV(iv, ivLength / 8);
 
 						byte[] cData = letterSoup.encrypt(document.getBytes(), document.getBytes().length, null);
+						
 						byte[] buffer = new byte[macLength / 8];
 						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
 												
+						System.out.println("Arquivo foi cifrado e autenticado.");
+						
 						//Save .ciph file
 						filePath[0] = filePath[0].split("\\.")[0] + ".ciph";
 						filePath[1] = filePath[1].split("\\.")[0] + ".ciph";
-						saveDocument("Cifração executada com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(cData));
+						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.", filePath[0], Util.byteToBinaryString(cData));
 
 						//Save .mac file
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
-						saveDocument("Autenticação executada com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(buffer));
+						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma do arquivo original.", filePath[0], Util.byteToBinaryString(buffer));
 						
 						//Save .iv file
 						filePath[0] = filePath[0].split("\\.")[0] + ".iv";
 						filePath[1] = filePath[1].split("\\.")[0] + ".iv";
 						
-						saveDocument("Vetor de inicialização salvo com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(iv));
+						saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma do arquivo original\n.", filePath[0], Util.byteToBinaryString(iv));
 				}
 				System.out.print(instructions);
 				break;
@@ -190,28 +191,30 @@ public class TaRusso {
 						letterSoup.setMAC(marvin);
 						letterSoup.setKey(cipherKey, keyBits);
 						
-						//Set the Letter Soup IV
-						letterSoup.setIV(ivDocument.getBytes(), ivDocument.getBytes().length);
+						byte[] savedIv = Util.binaryStringToByte(ivDocument);
+						byte[]cData = Util.binaryStringToByte(document);
+						String savedMac = Printer.getVectorAsPlainText(Util.binaryStringToByte(macDocument));
+
+						letterSoup.setIV(savedIv, savedIv.length);
 						
-						byte[] mData = letterSoup.decrypt(document.getBytes(), document.getBytes().length, null);
+						byte[] mData = letterSoup.decrypt(cData, cData.length, null);
 						byte[] buffer = new byte[macLength / 8];
 						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
 						
 						
 						if(debug)
-							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + Printer.getVectorAsPlainText(macDocument.getBytes()) + "?");
+							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + savedMac + "?");
 						
-						if(Printer.getVectorAsPlainText(buffer).equals(Printer.getVectorAsPlainText(macDocument.getBytes()))){
-								System.out.println("Autenticação é válida: as tags são iguais.");
+						if(Printer.getVectorAsPlainText(buffer).equals(savedMac)){
+								System.out.println("Qapla'! O arquivo foi validado e decifrado!");
 								//Save .deciph file
 								filePath[0] = filePath[0].split("\\.")[0] + ".deciph";
 								filePath[1] = filePath[1].split("\\.")[0] + ".deciph";
 								
-								saveDocument("Decifração executada com sucesso.\n" +
-										"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(mData));
+								saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na pasta do arquivo original.\n", filePath[0], new String(mData));
 						}
 						else
-							System.out.println("Autenticação inválida.");
+							System.out.println("Autenticação inválida.\n");
 					}
 					System.out.print(instructions);
 					break;
@@ -244,25 +247,24 @@ public class TaRusso {
 						
 						byte[] buffer = new byte[macLength / 8];
 						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
-												
+										
+						System.out.println("Arquivo foi cifrado e autenticado.");
+						
 						//Save .ciph file
 						filePath[0] = filePath[0].split("\\.")[0] + ".ciph";
 						filePath[1] = filePath[1].split("\\.")[0] + ".ciph";
-						saveDocument("Cifração executada com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(cData));
+						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Util.byteToBinaryString(cData));
 
 						//Save .mac file
 						filePath[0] = filePath[0].split("\\.")[0] + ".mac";
 						filePath[1] = filePath[1].split("\\.")[0] + ".mac";
-						saveDocument("Autenticação executada com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(buffer));
+						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], Util.byteToBinaryString(buffer));
 						
 						//Save .iv file
 						filePath[0] = filePath[0].split("\\.")[0] + ".iv";
 						filePath[1] = filePath[1].split("\\.")[0] + ".iv";
 						
-						saveDocument("Vetor de inicialização salvo com sucesso.\n" +
-								"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(iv));
+						saveDocument("Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.\n", filePath[0], Util.byteToBinaryString(iv));
 				}
 					System.out.print(instructions);
 					break;
@@ -286,10 +288,13 @@ public class TaRusso {
 						letterSoup.setMAC(marvin);
 						letterSoup.setKey(cipherKey, keyBits);
 						
-						//Set the Letter Soup IV
-						letterSoup.setIV(ivDocument.getBytes(), ivDocument.getBytes().length);
+						byte[] savedIv = Util.binaryStringToByte(ivDocument);
+						byte[]cData = Util.binaryStringToByte(document);
+						String savedMac = Printer.getVectorAsPlainText(Util.binaryStringToByte(macDocument));
 						
-						byte[] mData = letterSoup.decrypt(document.getBytes(), document.getBytes().length, null);
+						letterSoup.setIV(savedIv, savedIv.length);
+						
+						byte[] mData = letterSoup.decrypt(cData, cData.length, null);
 						
 						letterSoup.update(assocDocument.getBytes(), assocDocument.getBytes().length);
 						
@@ -298,25 +303,24 @@ public class TaRusso {
 						
 						
 						if(debug)
-							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + Printer.getVectorAsPlainText(macDocument.getBytes()) + "?");
+							System.out.println(Printer.getVectorAsPlainText(buffer) + " = " + savedMac + "?");
 						
-						if(Printer.getVectorAsPlainText(buffer).equals(Printer.getVectorAsPlainText(macDocument.getBytes()))){
-								System.out.println("Autenticação é válida: as tags são iguais.");
+						if(Printer.getVectorAsPlainText(buffer).equals(savedMac)){
+								System.out.println("Qapla'! O arquivo foi validado e decifrado!");
 								//Save .deciph file
 								filePath[0] = filePath[0].split("\\.")[0] + ".deciph";
 								filePath[1] = filePath[1].split("\\.")[0] + ".deciph";
 								
-								saveDocument("Decifração executada com sucesso.\n" +
-										"Arquivo \"" + filePath[1] + "\" salvo na mesma pasta do arquivo original.", filePath[0], new String(mData));
+								saveDocument("Arquivo \"" + filePath[1] + "\" foi salvo na mesma pasta do arquivo original.\n", filePath[0], new String(mData));
 						}
 						else
-							System.out.println("Autenticação inválida.");
+							System.out.println("Autenticação inválida.\n");
 					}
 					System.out.print(instructions);
 					break;
 				case 0:
 					validValue = true;
-					System.out.println("[programa encerrado]");
+					System.out.println("[programa encerrado, tlho' SoH]");
 					break;
 				default:
 					System.out.print("Valor inválido. " + instructions);
@@ -398,7 +402,7 @@ public class TaRusso {
 							}
 						}
 						// Output
-						System.out.println("Senha adicionada com sucesso");
+						System.out.println("Senha adicionada com sucesso\n");
 						if (debug)
 							Printer.printVector(cipherKey);
 	
@@ -452,7 +456,7 @@ public class TaRusso {
 	 * Função para"Selecionar um tamanho de MAC entre o mínimo de 64 bits e o tamanho completo do bloco"
 	 * .
 	 */
-	private static void aLengthInput() {
+	private static void macLengthInput() {
 		// Instructions string
 		String instructions = "Por favor, digite um tamanho para MAC (entre 64 e 96 - em bits): ";
 
@@ -471,7 +475,7 @@ public class TaRusso {
 					macLength = intValue;
 
 					// Output
-					System.out.println("IV terá " + intValue + " bits.");
+					System.out.println("MAC terá " + intValue + " bits.\n");
 
 					validValue = true;
 				} else {
@@ -509,8 +513,8 @@ public class TaRusso {
 				text = Util.readFile(filePath[0]); 
 				if (null != text) {
 					// Output
-					System.out.println("Arquivo \"" + filePath[1]	+ "\" lido com sucesso.");
 					if (debug){
+						System.out.println("Arquivo \"" + filePath[1]	+ "\" lido com sucesso.");
 						System.out.println("Conteúdo do arquivo: " + text);
 					}
 
@@ -538,9 +542,9 @@ public class TaRusso {
 			try {
 				if (Util.saveFile(filePath, text)) {
 					// Output
-					System.out.println("Arquivo gravado com sucesso.");
 
 					if (debug){
+						System.out.println("Arquivo gravado com sucesso.");
 						System.out.println("Conteúdo do arquivo: " + text);
 					}
 
