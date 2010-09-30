@@ -81,17 +81,6 @@ public class Util {
 		return result;
 	}
 
-	/**
-	 * Convert a vector representing a block to a matrix representing a M2t
-	 * matrix
-	 * 
-	 * @param block
-	 *            Block of byte
-	 * @param matrix
-	 *            Matrix of byte
-	 * @param columnMapping
-	 *            Boolean
-	 */
 	public static void blockToMatrix(byte[] block, byte[][] matrix,
 			boolean columnMapping) {
 		int size = block.length / 3;
@@ -110,15 +99,6 @@ public class Util {
 		}
 	}
 
-	/**
-	 * Convert a matrix representing a M2t matrix a to vector representing a
-	 * block
-	 * 
-	 * @param block
-	 *            Block of byte
-	 * @param matrix
-	 *            Matrix of byte
-	 */
 	public static void matrixToBlock(byte[] block, byte[][] matrix,
 			boolean columnMapping) {
 		int size = matrix[0].length;
@@ -252,4 +232,44 @@ public class Util {
 		return rightPaddedMessage;
 	}
 	
+	public static byte[] binaryStringToByte(String binaryString) {
+		int stringSize = binaryString.length() / 8;
+		byte[] byteData = new byte[stringSize];
+		
+		for (int i = 0; i < stringSize; i++){
+			byteData[i] = (byte)Integer.parseInt(binaryString.substring(i * 8, i * 8 + 8), 2);
+		}
+		return byteData;
+	}
+	
+	public static String byteToBinaryString(byte[] byteData){
+		  String binaryString = "";
+		  //Iterate over the bytes vector
+		  for (int i = 0; i < byteData.length; i++){
+			  //Convert each byte to a bit string
+			  binaryString += intByteRepresentationToBinaryString((int)(byteData[i] & 0xFF));
+		  }
+		  return binaryString;
+	}
+	public static String intByteRepresentationToBinaryString(int intByteRepresentation){
+		String binaryString = intValueToBinaryString(intByteRepresentation);
+		int diff = 8 - binaryString.length();
+		
+		for (int i = 0; i < diff; i++)
+			binaryString = "0" + binaryString;
+		
+		return binaryString;
+	}
+	
+	public static String intValueToBinaryString(int value)
+	{
+		if(value != 0){
+			return Integer.toBinaryString(value);
+		}
+		return "";
+	}
+
+
+
+
 }
