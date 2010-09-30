@@ -1,6 +1,6 @@
 package curupira1;
 
-import interfaces.BlockCipher;
+import util.BlockCipher;
 import util.Util;
 import util.Printer;
 

@@ -1,7 +1,7 @@
 package marvin;
 
-import interfaces.BlockCipher;
-import interfaces.MAC;
+import util.BlockCipher;
+import util.MAC;
 import util.Util;
 
 public class Marvin implements MAC {
