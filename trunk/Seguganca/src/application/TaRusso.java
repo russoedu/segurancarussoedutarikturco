@@ -12,7 +12,7 @@ import util.Util;
 import curupira1.Curupira1;
 
 public class TaRusso {
-	private static boolean debug = false;
+	private static boolean debug = true;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -37,8 +37,8 @@ public class TaRusso {
 
 	private static void mainMenu(){
 		String instructions = "Por favor, escolha uma das opcoes abaixo:\n" +
-				"[1] Escolher uma senha alfanuméerica (ASCII)\n" +
-				"[2] Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco\n" +
+				"[1] Escolher uma senha alfanuméerica\n" +
+				"[2] Selecionar um tamanho de IV e de MAC entre o minimo de 64 bits e o tamanho completo do bloco\n" +
 				"[3] Selecionar um arquivo para ser apenas autenticado\n" +
 				"[4] Selecionar um arquivo com seu respectivo MAC para ser validado\n" +
 				"[5] Selecionar um arquivo para ser cifrado e autenticado\n" +
@@ -59,7 +59,7 @@ public class TaRusso {
 					cipherKeyInput();
 					System.out.print(instructions);
 					break;
-				//Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco"
+				//Selecionar um tamanho de IV e de MAC entre o minimo de 64 bits e o tamanho completo do bloco"
 				case 2:
 					macLengthInput();
 					ivSizeInput();
@@ -374,9 +374,20 @@ public class TaRusso {
 
 	private static void cipherKeyInput() {
 		int maxSize = 192 / 8;
+		int medSize = 144 / 8;
+		int minSize = 96 / 8;
 		
+		boolean hexaPass = useHexadecimalPassword();
+		
+		String instructions;
+		if(hexaPass){
+			instructions = "Por favor, digite uma senha hexadecimal de ate " + maxSize * 2 + " caracteres: ";
+		}
+		else{
+			instructions = "Por favor, digite uma senha em ASCII de ate " + maxSize + " caracteres: ";
+		}
+
 		// Instructions string
-		String instructions = "Por favor, digite uma senha de ate " + maxSize + " caracteres: ";
 
 		boolean validValue = false;
 
@@ -385,32 +396,54 @@ public class TaRusso {
 			try {
 				lineRead = reader.readLine().trim();
 				String stringValue = lineRead;
-				int stringSize = lineRead.length();
+				
+				int stringSize;
+				if(hexaPass){
+					stringSize = lineRead.length() / 2;
+				}
+				else{
+					stringSize = lineRead.length();
+				}
+				
+				if(debug)
+					System.out.println("Tamanho da chave: " + stringSize);
 
 				// Validation
 				if (0 <= stringSize && stringSize <= maxSize && !stringValue.equals("")) {
 					//Create the key size dinamicly
-					if(stringSize <= 96 / 8){
-						keyBits = 96;
-						maxSize = 96 / 8;
+					if(stringSize <= minSize){
+						keyBits = minSize * 8;
+						maxSize = minSize;
 					}
-					else if(stringSize <= 144 / 8){
-						keyBits = 144;
-						maxSize = 144 / 8;
+					else if(stringSize <= medSize){
+						keyBits = medSize * 8;
+						maxSize = medSize;
 					}
 					else{
-						keyBits = 192;
-						maxSize = 192 / 8;
+						keyBits = maxSize * 8;
 					}
 					cipherKey = new byte[maxSize];
 					
-					byte[] stringBytes = stringValue.getBytes();
-					//Fill the cipherKey with the inserted password
-					for(int i = 0; i < stringSize; i++){
-						cipherKey[i] = stringBytes[i];
+					byte[] stringBytes;
+					if(hexaPass){
+						stringBytes = Util.convertStringToVector(stringValue);
+						//Fill the cipherKey with the inserted password
+						for(int i = 0; i < stringSize; i++){
+							cipherKey[i] = stringBytes[i];
 						if (debug)
 							Printer.printVector(cipherKey);
+						}	
+					}						
+					else{
+						stringBytes = stringValue.getBytes();
+						//Fill the cipherKey with the inserted password
+						for(int i = 0; i < stringSize; i++){
+							cipherKey[i] = stringBytes[i];
+						if (debug)
+							Printer.printVector(cipherKey);
+						}
 					}
+					
 					// Output
 					System.out.println("Senha adicionada com sucesso. Chave de " + keyBits + " bits criada.\n");
 
@@ -428,8 +461,44 @@ public class TaRusso {
 	}
 	
 	/**
-	 * Função para"Selecionar um tamanho de IV entre o mínimo de 64 bits e otamanho completo do bloco"
-	 * .
+	 * Give the user an option to use an hexadecimal or ASCII password
+	 * @return True if user chose hexadecimal, or false for ASCII
+	 */
+	private static boolean useHexadecimalPassword(){
+		String instructions = "Como vocÍ deseja inserir a senha? ";
+		String subInstructions = "Escolha (a)lfanumerica ou (h)exadecimal: ";
+		
+		
+		boolean validValue = false;
+		boolean returnValue = false;
+
+		System.out.print(instructions + subInstructions);
+		while (!validValue) {
+			try {
+				lineRead = reader.readLine().trim().toLowerCase();
+
+				// Validation
+				if (lineRead.equals("h")){
+					returnValue = true;
+					validValue = true;					
+				}
+				else if(lineRead.equals("a")){
+					returnValue = false;
+					validValue = true;										
+				}	
+				else{
+					System.out.print("Valor invalido. " + subInstructions);										
+				}
+				
+			} catch (Exception e) {
+				System.out.print("Valor invalido. " + subInstructions);
+			}
+		}
+		return returnValue;
+	}
+	
+	/**
+	 * Chose IV size
 	 */
 	private static void ivSizeInput() {
 		// Instructions string
@@ -465,8 +534,7 @@ public class TaRusso {
 	}
 
 	/**
-	 * Função para"Selecionar um tamanho de MAC entre o mínimo de 64 bits e o tamanho completo do bloco"
-	 * .
+	 * Choose MAC size
 	 */
 	private static void macLengthInput() {
 		// Instructions string
@@ -515,7 +583,7 @@ public class TaRusso {
 					
 					if (debug){
 						System.out.println("Arquivo \"" + filePath[0]	+ "\" lido com sucesso.");
-						System.out.println("Conteudo do arquivo: " + data);
+						System.out.println("Conteudo do arquivo: " + Printer.getVectorAsPlainText(data));
 					}
 					
 					return data;
@@ -542,7 +610,7 @@ public class TaRusso {
 					
 					if (debug){
 						System.out.println("Arquivo \"" + filePath[0]	+ "\" lido com sucesso.");
-						System.out.println("Conteudo do arquivo: " + data);
+						System.out.println("Conteudo do arquivo: " + Printer.getVectorAsPlainText(data));
 					}
 					
 					return data;
@@ -622,7 +690,7 @@ public class TaRusso {
 		if(iv)
 			instructions += " e \".iv\"";
 		
-		instructions += "? (s para sim, n para nao): ";
+		instructions += "? Escolha (s)im ou (n)ao: ";
 
 		boolean validValue = false;
 		boolean returnValue = false;
