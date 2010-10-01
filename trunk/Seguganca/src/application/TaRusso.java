@@ -12,7 +12,7 @@ import util.Util;
 import curupira1.Curupira1;
 
 public class TaRusso {
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -25,11 +25,11 @@ public class TaRusso {
 	
 	public static void main(String[] args) throws IOException {				
 		System.out
-				.println("************************************************************");
+				.println("****************************************************************");
 		System.out
-				.println("Bem vindo ao Projeto TaRusso, de Eduardo Russo e Tarik Feres");
+				.println("* Bem vindo ao Projeto TaRusso, de Eduardo Russo e Tarik Feres *");
 		System.out
-				.println("************************************************************\n");
+				.println("****************************************************************\n");
 
 		mainMenu();
 		
@@ -62,8 +62,8 @@ public class TaRusso {
 					break;
 				//Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco"
 				case 2:
-					ivSizeInput();
 					macLengthInput();
+					ivSizeInput();
 					System.out.print(instructions);
 					break;
 				//Escolher uma senha alfanumérica
@@ -89,29 +89,42 @@ public class TaRusso {
 						
 						//Save .mac file
 						filePath[0] = filePath[0] + ".mac";
-						
-						saveDocument("Arquivo \"" + filePath[0] + "\" foi autenticado e salvo.\n", filePath[0], buffer);
+						System.out.println("Arquivo foi autenticado.");
+						saveDocument("Arquivo \"" + filePath[0] + "\" foi salvo.\n", filePath[0], buffer);
 					}
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo com seu respectivo MAC para ser validado
 				case 5:
-					if(variableAreFilled(true, true, true)){
+					if(variableAreFilled(true, true, false)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						String[] filePath = new String[2];
 						byte[] aData = readDocument("Indique o caminho do arquivo para ser validado: ", filePath);
-						byte[] savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+						
+						byte[] savedMac;
+						
+						if(useDefaultValues(true, false)){
+							filePath[0] = filePath[0] + ".mac";
+							savedMac = readDocument(filePath);
+							if(null == savedMac){
+								System.out.println("Arquivo \".mac\" n„o foi encontrado!");
+								savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+							}
+						}
+						else{
+							savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+						}
 						
 						marvin.setCipher(curupira1);
 						marvin.setKey(cipherKey, keyBits);
 						marvin.init();
 
 						marvin.update(aData, aData.length);
-						byte[] buffer = new byte[macLength / 8];
-						buffer = marvin.getTag(buffer, macLength / 8);
 						
-//						String savedMac = Printer.getVectorAsPlainText(macDocument.getBytes());
+						int bufferSize = savedMac.length;
+						byte[] buffer = new byte[bufferSize];
+						buffer = marvin.getTag(buffer, bufferSize * 8);
 						
 						if(debug){
 							Printer.printVector("buffer   ", buffer);
@@ -179,23 +192,42 @@ public class TaRusso {
 						
 						String[] filePath = new String[2];
 						byte[]cData = readDocument("Indique o caminho do arquivo \".ciph\" para ser decifrado: ", filePath);
-						byte[] savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
-						byte[] savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
+						
+						byte[] savedMac;
+						byte[] savedIv;
+						
+						if(useDefaultValues(true, true)){
+							filePath[0] = filePath[0].substring(0, filePath[0].length() - 5) + ".mac";
+							savedMac = readDocument(filePath);
+							if(null == savedMac){
+								System.out.println("Arquivo \".mac\" n„o foi encontrado!");
+								savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+							}
+							
+							filePath[0] = filePath[0].substring(0, filePath[0].length() - 4) + ".iv";
+							savedIv = readDocument(filePath);
+							if(null == savedIv){
+								System.out.println("Arquivo \".iv\" n„o foi encontrado!");
+								savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
+							}
+						}
+						else{
+							savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+							savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
+						}
 						
 						letterSoup.setCipher(curupira1);
 						marvin.setCipher(curupira1);
 						letterSoup.setMAC(marvin);
 						letterSoup.setKey(cipherKey, keyBits);
-						
-//						byte[] savedIv = ivDocument.getBytes();
-//						byte[]cData = document.getBytes();
-//						String savedMac = Printer.getVectorAsPlainText(macDocument.getBytes());
 
 						letterSoup.setIV(savedIv, savedIv.length);
 						
 						byte[] mData = letterSoup.decrypt(cData, cData.length, null);
-						byte[] buffer = new byte[macLength / 8];
-						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
+						
+						int bufferSize = savedMac.length;
+						byte[] buffer = new byte[bufferSize];
+						buffer = letterSoup.getTag(new byte[bufferSize], bufferSize * 8);
 						
 						
 						if(debug){
@@ -273,18 +305,37 @@ public class TaRusso {
 						String[] assocFilePath = new String[2];
 						
 						byte[]cData = readDocument("Indique o caminho do arquivo \".ciph\" para ser decifrado: ", filePath);
+
+						
+						byte[] savedMac;
+						byte[] savedIv;
+						
+						if(useDefaultValues(true, true)){
+							filePath[0] = filePath[0].substring(0, filePath[0].length() - 5) + ".mac";
+							savedMac = readDocument(filePath);
+							if(null == savedMac){
+								System.out.println("Arquivo \".mac\" n„o foi encontrado!");
+								savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+							}
+							
+							filePath[0] = filePath[0].substring(0, filePath[0].length() - 4) + ".iv";
+							savedIv = readDocument(filePath);
+							if(null == savedIv){
+								System.out.println("Arquivo \".iv\" n„o foi encontrado!");
+								savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
+							}
+						}
+						else{
+							savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
+							savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
+						}
+						
 						byte[] assocData = readDocument("Indique o caminho do arquivo de dados associados: ", assocFilePath);	
-						byte[] savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
-						byte[] savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
 						
 						letterSoup.setCipher(curupira1);
 						marvin.setCipher(curupira1);
 						letterSoup.setMAC(marvin);
 						letterSoup.setKey(cipherKey, keyBits);
-						
-//						byte[] savedIv = ivDocument.getBytes();
-//						byte[]cData = document.getBytes();
-//						String savedMac = Printer.getVectorAsPlainText(macDocument.getBytes());
 						
 						letterSoup.setIV(savedIv, savedIv.length);
 						
@@ -292,8 +343,9 @@ public class TaRusso {
 						
 						letterSoup.update(assocData, assocData.length);
 						
-						byte[] buffer = new byte[macLength / 8];
-						buffer = letterSoup.getTag(new byte[macLength / 8], macLength);
+						int bufferSize = savedMac.length;
+						byte[] buffer = new byte[bufferSize];
+						buffer = letterSoup.getTag(new byte[bufferSize], bufferSize * 8);
 						
 						
 						if(debug){
@@ -344,9 +396,11 @@ public class TaRusso {
 					// Value set
 					keyBits = intValue;
 
-					// Output
-					System.out.println("Chave tera " + intValue + " bits.\n");
+					if(debug)
+						System.out.println("Chave tera " + intValue + " bits.\n");
 
+					System.out.println();
+					
 					validValue = true;
 				} else {
 					System.out.print("Valor invalido. " + instructions);
@@ -388,9 +442,12 @@ public class TaRusso {
 							}
 						}
 						// Output
-						if (debug)
+						if (debug){
 							System.out.println("Senha adicionada com sucesso\n");
 							Printer.printVector(cipherKey);
+						}
+						
+						System.out.println();
 	
 						validValue = true;
 					} else {
@@ -428,6 +485,8 @@ public class TaRusso {
 					if(debug)
 						System.out.println("IV tera " + intValue + " bits.");
 
+					System.out.println();
+					
 					validValue = true;
 				} else {
 					System.out.print("Valor invalido. " + instructions);
@@ -478,8 +537,6 @@ public class TaRusso {
 	 */
 	private static byte[] readDocument(String instructions, String[] filePath) {
 		boolean validValue = false;
-//		byte[] text;
-		
 		System.out.print(instructions);
 		while (!validValue) {
 			try {
@@ -488,18 +545,45 @@ public class TaRusso {
 				// Validation
 				byte[] data = Util.readFile(filePath[0]); 
 				if (null != data) {
-					// Output
+					
 					if (debug){
 						System.out.println("Arquivo \"" + filePath[0]	+ "\" lido com sucesso.");
 						System.out.println("Conteudo do arquivo: " + data);
 					}
-					System.out.println(data);
+					
 					return data;
 				} else {
 					System.out.print("O arquivo \"" + filePath[0] + "\" nao foi encontrado. " + instructions);
 				}
 			} catch (Exception e) {
 				System.out.print("O arquivo \"" + filePath[0] + "\" nao foi encontrado. " + instructions);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Read a text file.
+	 */
+	private static byte[] readDocument(String[] filePath) {
+		boolean validValue = false;
+		while (!validValue) {
+			try {				
+				// Validation
+				byte[] data = Util.readFile(filePath[0]); 
+				if (null != data) {
+					
+					if (debug){
+						System.out.println("Arquivo \"" + filePath[0]	+ "\" lido com sucesso.");
+						System.out.println("Conteudo do arquivo: " + data);
+					}
+					
+					return data;
+				} else {
+					return null;
+				}
+			} catch (Exception e) {
+				return null;
 			}
 		}
 		return null;
@@ -559,5 +643,50 @@ public class TaRusso {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Give the user an option to use de default file paths for .mac and .iv files
+	 * @param mac if you want to show the option for .mac files
+	 * @param iv if you want to show the option for .iv files
+	 * @return True if user chose YES or false otherwise
+	 */
+	private static boolean useDefaultValues(boolean mac, boolean iv){
+		String instructions = "Deseja usar os caminhos padroes para o(s) arquivo(s) ";
+		if(mac)
+			instructions += "\".mac\"";
+
+		if(iv)
+			instructions += "e \".iv\"";
+		
+		instructions += "? (s para sim, n para nao): ";
+
+		boolean validValue = false;
+		boolean returnValue = false;
+
+		System.out.print(instructions);
+		while (!validValue) {
+			try {
+				lineRead = reader.readLine().trim().toLowerCase();
+
+				// Validation
+				if (lineRead.equals("s")){
+					returnValue = true;
+					validValue = true;					
+				}
+				else if(lineRead.equals("n")){
+					returnValue = false;
+					validValue = true;										
+				}	
+				else{
+					System.out.print("Valor invalido. " + instructions);
+					validValue = false;										
+				}
+				
+			} catch (Exception e) {
+				System.out.print("Valor invalido. " + instructions);
+			}
+		}
+		return returnValue;
 	}
 }
