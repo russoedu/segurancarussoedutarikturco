@@ -37,15 +37,14 @@ public class TaRusso {
 
 	private static void mainMenu(){
 		String instructions = "Por favor, escolha uma das opcoes abaixo:\n" +
-				"[1] Selecionar um tamanho de chave dentre os valores admissiveis\n" +
+				"[1] Escolher uma senha alfanuméerica (ASCII)\n" +
 				"[2] Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco\n" +
-				"[3] Escolher uma senha alfanumérica (ASCII)\n" +
-				"[4] Selecionar um arquivo para ser apenas autenticado\n" +
-				"[5] Selecionar um arquivo com seu respectivo MAC para ser validado\n" +
-				"[6] Selecionar um arquivo para ser cifrado e autenticado\n" +
-				"[7] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado\n" +
-				"[8] Selecionar um arquivo para ser cifrado e autenticado, e um arquivo correspondente de dados associados para ser autenticado\n" +
-				"[9] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado, um arquivo correspondente de dados associados para ser autenticado\n" +
+				"[3] Selecionar um arquivo para ser apenas autenticado\n" +
+				"[4] Selecionar um arquivo com seu respectivo MAC para ser validado\n" +
+				"[5] Selecionar um arquivo para ser cifrado e autenticado\n" +
+				"[6] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado\n" +
+				"[7] Selecionar um arquivo para ser cifrado e autenticado, e um arquivo correspondente de dados associados para ser autenticado\n" +
+				"[8] Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado, um arquivo correspondente de dados associados para ser autenticado\n" +
 				"[0] Finalizar programa\n" +
 				"Opcao: ";
 		boolean validValue = false;
@@ -55,9 +54,9 @@ public class TaRusso {
 			try {
 				key = new Integer(reader.readLine().trim());
 				switch (key) {
-				//Selecionar um tamanho de chave dentre os valores admissiveis
+				//Selecionar um tamanho de chave dentre os valores admissiveis e escolher uma senha alfanumeérica
 				case 1:
-					keySizeInput();
+					cipherKeyInput();
 					System.out.print(instructions);
 					break;
 				//Selecionar um tamanho de IV e de MAC entre o mínimo de 64 bits e o tamanho completo do bloco"
@@ -66,14 +65,9 @@ public class TaRusso {
 					ivSizeInput();
 					System.out.print(instructions);
 					break;
-				//Escolher uma senha alfanumérica
-				case 3:
-					cipherKeyInput();
-					System.out.print(instructions);
-					break;
 				//Selecionar um arquivo para ser apenas autenticado
-				case 4:
-					if(variableAreFilled(true, true, true)){
+				case 3:
+					if(variableAreFilled(true, true)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						
@@ -95,8 +89,8 @@ public class TaRusso {
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo com seu respectivo MAC para ser validado
-				case 5:
-					if(variableAreFilled(true, true, false)){
+				case 4:
+					if(variableAreFilled(true, false)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						String[] filePath = new String[2];
@@ -141,8 +135,8 @@ public class TaRusso {
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo para ser cifrado e autenticado
-				case 6:
-					if(variableAreFilled(true, true, true)){
+				case 5:
+					if(variableAreFilled(true, true)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						LetterSoup letterSoup = new LetterSoup();
@@ -184,8 +178,8 @@ public class TaRusso {
 				System.out.print(instructions);
 				break;
 				//Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado
-				case 7:
-					if(variableAreFilled(true, true, false)){
+				case 6:
+					if(variableAreFilled(true, false)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						LetterSoup letterSoup = new LetterSoup();
@@ -248,8 +242,8 @@ public class TaRusso {
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo para ser cifrado e autenticado, e um arquivo correspondente de dados associados para ser autenticado
-				case 8:
-					if(variableAreFilled(true, true, true)){
+				case 7:
+					if(variableAreFilled(true, true)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						LetterSoup letterSoup = new LetterSoup();
@@ -295,8 +289,8 @@ public class TaRusso {
 					System.out.print(instructions);
 					break;
 				//Selecionar um arquivo cifrado com seus respectivos IV e MAC para ser validado e decifrado, um arquivo correspondente de dados associados para ser autenticado
-				case 9:
-					if(variableAreFilled(true, true, false)){
+				case 8:
+					if(variableAreFilled(true, false)){
 						Curupira1 curupira1 = new Curupira1();
 						Marvin marvin = new Marvin();
 						LetterSoup letterSoup = new LetterSoup();
@@ -378,9 +372,11 @@ public class TaRusso {
 		}
 	}
 
-	private static void keySizeInput() {
+	private static void cipherKeyInput() {
+		int maxSize = 192 / 8;
+		
 		// Instructions string
-		String instructions = "Por favor, digite um tamanho para as chaves (\"96\", \"144\" ou \"192\" - em bits): ";
+		String instructions = "Por favor, digite uma senha de ate " + maxSize + " caracteres: ";
 
 		boolean validValue = false;
 
@@ -388,74 +384,45 @@ public class TaRusso {
 		while (!validValue) {
 			try {
 				lineRead = reader.readLine().trim();
-				int intValue = new Integer(lineRead);
+				String stringValue = lineRead;
+				int stringSize = lineRead.length();
 
 				// Validation
-				if (intValue == 96 || intValue == 144 || intValue == 192) {
-
-					// Value set
-					keyBits = intValue;
-
-					if(debug)
-						System.out.println("Chave tera " + intValue + " bits.\n");
-
-					System.out.println();
+				if (0 <= stringSize && stringSize <= maxSize && !stringValue.equals("")) {
+					//Create the key size dinamicly
+					if(stringSize <= 96 / 8){
+						keyBits = 96;
+						maxSize = 96 / 8;
+					}
+					else if(stringSize <= 144 / 8){
+						keyBits = 144;
+						maxSize = 144 / 8;
+					}
+					else{
+						keyBits = 192;
+						maxSize = 192 / 8;
+					}
+					cipherKey = new byte[maxSize];
 					
+					byte[] stringBytes = stringValue.getBytes();
+					//Fill the cipherKey with the inserted password
+					for(int i = 0; i < stringSize; i++){
+						cipherKey[i] = stringBytes[i];
+						if (debug)
+							Printer.printVector(cipherKey);
+					}
+					// Output
+					System.out.println("Senha adicionada com sucesso. Chave de " + keyBits + " bits criada.\n");
+
+					if (debug)
+						Printer.printVector(cipherKey);
+
 					validValue = true;
 				} else {
 					System.out.print("Valor invalido. " + instructions);
 				}
 			} catch (Exception e) {
 				System.out.print("Valor invalido. " + instructions);
-			}
-		}
-	}
-
-	private static void cipherKeyInput() {
-		
-		if(variableAreFilled(true, false, false)){
-			int maxSize = keyBits / 8;
-			cipherKey = new byte[maxSize];
-			
-			// Instructions string
-			String instructions = "Por favor, digite uma senha de ate " + maxSize
-					+ " caracteres: ";
-	
-			boolean validValue = false;
-	
-			System.out.print(instructions);
-			while (!validValue) {
-				try {
-					lineRead = reader.readLine().trim();
-					String stringValue = lineRead;
-					int stringSize = lineRead.length();
-	
-					// Validation
-					if (0 <= stringSize && stringSize <= maxSize && !stringValue.equals("")) {
-						byte[] stringBytes = stringValue.getBytes();
-						
-						//Fill the cipherKey with the inserted password
-						for(int i = 0; i < stringSize; i++){
-							cipherKey[i] = stringBytes[i];
-							if (debug) {
-								Printer.printVector(cipherKey);
-							}
-						}
-						// Output
-						if (debug){
-							System.out.println("Senha adicionada com sucesso\n");
-							Printer.printVector(cipherKey);
-						}
-						
-						System.out.println();
-	
-						validValue = true;
-					} else {
-						System.out.print("Valor invalido. " + instructions);
-					}
-				} catch (Exception e) {
-					System.out.print("Valor invalido. " + instructions);
-				}
 			}
 		}
 	}
@@ -624,15 +591,11 @@ public class TaRusso {
 	 * @param aLengthOrIvVariable
 	 * @return
 	 */
-	private static boolean variableAreFilled(boolean keyBitsVariable, boolean cipherKeyVariable, boolean aLengthOrIvVariable){
+	private static boolean variableAreFilled(boolean cipherKeyVariable, boolean aLengthOrIvVariable){
 		String message = "";
-		if(keyBitsVariable)
-			if(keyBits == 0)
-				message += "\tVoce precisa escolher o tamanho da chave antes (opçãcao 1).\n";
-		
 		if(cipherKeyVariable)
 			if(cipherKey == null)
-				message += "\tVoce precisa definir uma senha antes (opçãcao 3).\n";
+				message += "\tVoce precisa definir uma senha antes (opçãcao 1).\n";
 
 		if(aLengthOrIvVariable)
 			if(macLength == 0)
@@ -657,7 +620,7 @@ public class TaRusso {
 			instructions += "\".mac\"";
 
 		if(iv)
-			instructions += "e \".iv\"";
+			instructions += " e \".iv\"";
 		
 		instructions += "? (s para sim, n para nao): ";
 
