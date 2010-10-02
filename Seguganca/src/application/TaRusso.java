@@ -12,7 +12,7 @@ import util.Util;
 import curupira1.Curupira1;
 
 public class TaRusso {
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -37,7 +37,7 @@ public class TaRusso {
 
 	private static void mainMenu(){
 		String instructions = "Por favor, escolha uma das opcoes abaixo:\n" +
-				"[1] Escolher uma senha alfanuméerica\n" +
+				"[1] Escolher uma senha\n" +
 				"[2] Selecionar um tamanho de IV e de MAC entre o minimo de 64 bits e o tamanho completo do bloco\n" +
 				"[3] Selecionar um arquivo para ser apenas autenticado\n" +
 				"[4] Selecionar um arquivo com seu respectivo MAC para ser validado\n" +
@@ -116,6 +116,7 @@ public class TaRusso {
 
 						marvin.update(aData, aData.length);
 						
+						
 						int bufferSize = savedMac.length;
 						byte[] buffer = new byte[bufferSize];
 						buffer = marvin.getTag(buffer, bufferSize * 8);
@@ -123,8 +124,6 @@ public class TaRusso {
 						if(debug){
 							Printer.printVector("buffer   ", buffer);
 							Printer.printVector("saved mac", savedMac);
-							System.out.println(buffer);
-							System.out.println(savedMac);
 						}
 						
 						if(Printer.getVectorAsPlainText(buffer).equals(Printer.getVectorAsPlainText(savedMac)))
@@ -627,18 +626,18 @@ public class TaRusso {
 	/**
 	 * Save a text file.
 	 */
-	private static void saveDocument(String message, String filePath, byte[] text) {
+	private static void saveDocument(String message, String filePath, byte[] data) {
 		boolean validValue = false;
 		
 		System.out.println(message);
 		while (!validValue) {
 			try {
-				if (Util.saveFile(filePath, text)) {
+				if (Util.saveFile(filePath, data)) {
 					// Output
 
 					if (debug){
 						System.out.println("Arquivo gravado com sucesso.");
-						System.out.println("Conteudo do arquivo: " + text);
+						System.out.println("Conteudo do arquivo: " + Printer.getVectorAsPlainText(data));
 					}
 
 					validValue = true;

@@ -29,18 +29,18 @@ public class LetterSoup implements AEAD {
 		l.setCipher(c);
 		m.setCipher(c);
 		l.setMAC(m);
-		String keyString = "000000000000000000000000";
+		String keyString = "0102030405060708090a0b0c";
 		byte[] key = Util.convertStringToVector(keyString);
 		l.setKey(key, 96);
-		String ivString = "000000000000000000000000";
+		String ivString = "0102030405060708090a0b0c";
 		byte[] iv = Util.convertStringToVector(ivString);
 		l.setIV(iv, 12);
-		String cipher = "a5";
+		String cipher = "010203";
 		byte[] C = Util.convertStringToVector(cipher);
 
 		Printer.printVectorAsPlainText("M", l.decrypt(C, C.length, new byte[12]));
 		
-		String associatedData = "00";
+		String associatedData = "010203";
 		byte[] A = Util.convertStringToVector(associatedData);
 		l.update(A, A.length);
 		
