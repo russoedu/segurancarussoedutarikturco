@@ -152,7 +152,7 @@ public class LetterSoup implements AEAD {
 		
 		int tagBytes = tagBits/8;
 		
-		byte[] A = mac.getTag(tag, tagBytes, false);
+		byte[] A = mac.getTag(tag, tagBits, false);
 		
 		if (H.length != 0)
 		{
