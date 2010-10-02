@@ -12,7 +12,7 @@ import util.Util;
 import curupira1.Curupira1;
 
 public class TaRusso {
-	private static boolean debug = false;
+	private static boolean debug = true;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
@@ -99,8 +99,8 @@ public class TaRusso {
 						byte[] savedMac;
 						
 						if(useDefaultValues(true, false)){
-							filePath[0] = filePath[0] + ".mac";
-							savedMac = readDocument(filePath);
+							String defaultDocument = filePath[0] + ".mac";
+							savedMac = readDocument(defaultDocument);
 							if(null == savedMac){
 								System.out.println("Arquivo \".mac\" não foi encontrado!");
 								savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
@@ -118,6 +118,10 @@ public class TaRusso {
 						
 						
 						int bufferSize = savedMac.length;
+						
+						if(debug)
+							System.out.println(bufferSize);
+						
 						byte[] buffer = new byte[bufferSize];
 						buffer = marvin.getTag(buffer, bufferSize * 8);
 						
@@ -190,15 +194,15 @@ public class TaRusso {
 						byte[] savedIv;
 						
 						if(useDefaultValues(true, true)){
-							filePath[0] = filePath[0].substring(0, filePath[0].length() - 5) + ".mac";
-							savedMac = readDocument(filePath);
+							String defaultDocument = filePath[0].substring(0, filePath[0].length() - 5) + ".mac";
+							savedMac = readDocument(defaultDocument);
 							if(null == savedMac){
 								System.out.println("Arquivo \".mac\" não foi encontrado!");
 								savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
 							}
 							
-							filePath[0] = filePath[0].substring(0, filePath[0].length() - 4) + ".iv";
-							savedIv = readDocument(filePath);
+							defaultDocument = defaultDocument.substring(0, defaultDocument.length() - 4) + ".iv";
+							savedIv = readDocument(defaultDocument);
 							if(null == savedIv){
 								System.out.println("Arquivo \".iv\" não foi encontrado!");
 								savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
@@ -304,15 +308,15 @@ public class TaRusso {
 						byte[] savedIv;
 						
 						if(useDefaultValues(true, true)){
-							filePath[0] = filePath[0].substring(0, filePath[0].length() - 5) + ".mac";
-							savedMac = readDocument(filePath);
+							String defaultDocument = filePath[0].substring(0, filePath[0].length() - 5) + ".mac";
+							savedMac = readDocument(defaultDocument);
 							if(null == savedMac){
 								System.out.println("Arquivo \".mac\" não foi encontrado!");
 								savedMac = readDocument("Indique o caminho do arquivo \".mac\": ", filePath);
 							}
 							
-							filePath[0] = filePath[0].substring(0, filePath[0].length() - 4) + ".iv";
-							savedIv = readDocument(filePath);
+							defaultDocument = defaultDocument.substring(0, defaultDocument.length() - 4) + ".iv";
+							savedIv = readDocument(defaultDocument);
 							if(null == savedIv){
 								System.out.println("Arquivo \".iv\" não foi encontrado!");
 								savedIv = readDocument("Indique o caminho do arquivo \".iv\": ", filePath);
@@ -599,16 +603,16 @@ public class TaRusso {
 	/**
 	 * Read a text file.
 	 */
-	private static byte[] readDocument(String[] filePath) {
+	private static byte[] readDocument(String filePath) {
 		boolean validValue = false;
 		while (!validValue) {
 			try {				
 				// Validation
-				byte[] data = Util.readFile(filePath[0]); 
+				byte[] data = Util.readFile(filePath); 
 				if (null != data) {
 					
 					if (debug){
-						System.out.println("Arquivo \"" + filePath[0]	+ "\" lido com sucesso.");
+						System.out.println("Arquivo \"" + filePath	+ "\" lido com sucesso.");
 						System.out.println("Conteudo do arquivo: " + Printer.getVectorAsPlainText(data));
 					}
 					
