@@ -161,7 +161,7 @@ public class LetterSoup implements AEAD {
 			mac.init(L);
 			mac.update(this.H, this.H.length);
 			byte[] D = new byte[12];
-			D = mac.getTag(D, tagBytes, false);
+			D = mac.getTag(D, tagBits, false);
 			cipher.Sct(D, D);
 			A = Util.xor(A, D);
 		}
