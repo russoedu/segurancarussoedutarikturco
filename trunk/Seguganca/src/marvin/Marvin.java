@@ -20,6 +20,8 @@ public class Marvin implements MAC {
 	@Override
 	public byte[] getTag(byte[] tag, int tagBits, boolean encript) {
 		
+		tagBits = tagBits / 8;
+		
 		byte[][] A = new byte[(aLength-1)/12 + 2][];
 		A[0] = new byte[n];
 		byte[] O = Util.multiplyByPx(this.R);
