@@ -12,7 +12,7 @@ import util.Util;
 import curupira1.Curupira1;
 
 public class TaRusso {
-	private static boolean debug = true;
+	private static boolean debug = false;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);
 	private static BufferedReader reader = new BufferedReader(inputStreamReader);
