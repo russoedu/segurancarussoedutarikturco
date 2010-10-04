@@ -79,7 +79,7 @@ public class TaRusso {
 						
 						marvin.update(aData, aData.length);
 						byte[] buffer = new byte[macLength / 8];
-						buffer = marvin.getTag(buffer, macLength / 8);
+						buffer = marvin.getTag(buffer, macLength);
 						
 						//Save .mac file
 						filePath[0] = filePath[0] + ".mac";
