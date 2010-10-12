@@ -1,6 +1,6 @@
 package interfaces;
 
-interface SpongeRandom {
+public interface SpongeRandom {
 
 	/** 
 	 * Get the PRNG bit-rate r. 
