@@ -1,10 +1,8 @@
-package lettersoup;
+package fase1;
 
 import interfaces.AEAD;
 import interfaces.BlockCipher;
 import interfaces.MAC;
-import marvin.Marvin;
-import curupira1.Curupira1;
 import util.Printer;
 import util.Util;
 

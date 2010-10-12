@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.SecureRandom;
 
-import lettersoup.LetterSoup;
-import marvin.Marvin;
 import util.Printer;
 import util.Util;
-import curupira1.Curupira1;
+import fase1.Curupira1;
+import fase1.LetterSoup;
+import fase1.Marvin;
 
-public class TaRusso {
+public class TaRussoFase1 {
 	private static boolean debug = false;
 	
 	private static InputStreamReader inputStreamReader = new InputStreamReader(System.in);

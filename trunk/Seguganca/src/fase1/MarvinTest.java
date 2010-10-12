@@ -1,10 +1,9 @@
-package marvin;
+package fase1;
 
 import util.Printer;
 import util.Util;
-import curupira1.Curupira1;
 
-public class Test {
+public class MarvinTest {
 	
 	public static void main(String[] args)
 	{
