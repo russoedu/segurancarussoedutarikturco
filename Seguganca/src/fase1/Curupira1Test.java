@@ -1,9 +1,9 @@
-package curupira1;
+package fase1;
 
 import util.Util;
 import util.Printer;
 
-public class Test {
+public class Curupira1Test {
 	public static void main(String[] args) {
 		
 		String key = "555555555555555555555555";

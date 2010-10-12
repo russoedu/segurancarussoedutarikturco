@@ -1,4 +1,4 @@
-package curupira1;
+package fase1;
 
 import interfaces.BlockCipher;
 import util.Util;
