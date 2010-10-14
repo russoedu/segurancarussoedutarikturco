@@ -1,0 +1,287 @@
+TKeccak
+v7
+r0
+t308698854.486054
+cCheck dependencies
+cCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/main.o /Users/edu/Desktop/Keccak/main.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/displayIntermediateValues.o /Users/edu/Desktop/Keccak/displayIntermediateValues.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/genKAT.o /Users/edu/Desktop/Keccak/genKAT.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakPermutationReference.o /Users/edu/Desktop/Keccak/KeccakPermutationReference.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakSponge.o /Users/edu/Desktop/Keccak/KeccakSponge.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/mainReference.o "/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c" normal x86_64 c com.apple.compilers.gcc.4_2
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004B99A23900000000000000EE
+t1268359737
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/ctype.h
+c000000004AC326060000000000002C18
+t1254303238
+s11288
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/machine/endian.h
+c000000004B56971B00000000000006C3
+t1263965979
+s1731
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004AC326060000000000004174
+t1254303238
+s16756
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdlib.h
+c000000004AC326060000000000002DF5
+t1254303238
+s11765
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/string.h
+c000000004AC326060000000000001731
+t1254303238
+s5937
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/time.h
+c000000004AC32606000000000000178E
+t1254303238
+s6030
+
+N/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c
+c000000004AAE4C6000000000000016BF
+t1252936800
+s5823
+i<malloc.h>
+i<stdio.h>
+i<stdlib.h>
+i<string.h>
+i"displayIntermediateValues.h"
+i"KeccakNISTInterface.h"
+i"KeccakPermutationInterface.h"
+i"KeccakPermutationReference.h"
+
+N/Users/edu/Desktop/Keccak/KeccakNISTInterface.h
+c000000004AAE4C6000000000000006C8
+t1252936800
+s1736
+
+N/Users/edu/Desktop/Keccak/KeccakPermutationInterface.h
+c000000004AAE4C6000000000000003D9
+t1252936800
+s985
+
+N/Users/edu/Desktop/Keccak/KeccakPermutationReference.c
+c000000004AAE4C6000000000000018EF
+t1252936800
+s6383
+i<stdio.h>
+i<string.h>
+i"brg_endian.h"
+i"displayIntermediateValues.h"
+i"KeccakNISTInterface.h"
+i"KeccakPermutationInterface.h"
+
+N/Users/edu/Desktop/Keccak/KeccakSponge.c
+c000000004AAE4C600000000000001E2A
+t1252936800
+s7722
+i<string.h>
+i"KeccakNISTInterface.h"
+i"KeccakPermutationInterface.h"
+i"displayIntermediateValues.h"
+
+N/Users/edu/Desktop/Keccak/brg_endian.h
+c000000004AAE4C6000000000000014ED
+t1252936800
+s5357
+i<sys/isa_defs.h>
+i<sys/endian.h>
+i<machine/endian.h>
+i<endian.h>
+i<byteswap.h>
+
+N/Users/edu/Desktop/Keccak/build/Debug/Keccak
+t2
+s0
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/Keccak.LinkFileList
+c000000004CB62765000000000000026C
+t1287006053
+s620
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakPermutationReference.o
+t1287006054
+s19080
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakSponge.o
+t1287006054
+s10832
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/displayIntermediateValues.o
+t1287006054
+s8796
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/genKAT.o
+t1287006054
+s24904
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/main.o
+t1287006054
+s2636
+
+N/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/mainReference.o
+t2
+s0
+
+N/Users/edu/Desktop/Keccak/displayIntermediateValues.c
+c000000004AAE4C600000000000000C3C
+t1252936800
+s3132
+i<stdio.h>
+i"displayIntermediateValues.h"
+i"KeccakNISTInterface.h"
+
+N/Users/edu/Desktop/Keccak/displayIntermediateValues.h
+c000000004AAE4C60000000000000044A
+t1252936800
+s1098
+i<stdio.h>
+
+N/Users/edu/Desktop/Keccak/genKAT.c
+c000000004AAE4C600000000000004130
+t1252936800
+s16688
+i<stdio.h>
+i<stdlib.h>
+i<string.h>
+i<time.h>
+i<ctype.h>
+i"KeccakNISTInterface.h"
+
+N/Users/edu/Desktop/Keccak/main.c
+c000000004CB627010000000000000089
+t1287005953
+s137
+i<stdio.h>
+
+N/Users/edu/Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/KeccakNISTInterface.h
+c000000004AAE4C6000000000000006C8
+t1252936800
+s1736
+
+N/Users/edu/Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/KeccakPermutationInterface.h
+c000000004AAE4C6000000000000003D9
+t1252936800
+s985
+
+N/Users/edu/Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/KeccakPermutationReference.h
+c000000004AAE4C600000000000000252
+t1252936800
+s594
+
+N/Users/edu/Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/displayIntermediateValues.h
+c000000004AAE4C60000000000000044A
+t1252936800
+s1098
+i<stdio.h>
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies308698853#308698853#0(0"0(0#1#0"8245940720249172992#0"0#
+
+CCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakPermutationReference.o /Users/edu/Desktop/Keccak/KeccakPermutationReference.c normal x86_64 c com.apple.compilers.gcc.4_2
+s308698853.627871
+e308698854.242596
+r1
+xCompileC
+xbuild/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakPermutationReference.o
+x/Users/edu/Desktop/Keccak/KeccakPermutationReference.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/edu/Desktop/Keccak/KeccakPermutationReference.c: In function 'displayRoundConstants':
+o/Users/edu/Desktop/Keccak/KeccakPermutationReference.c:218: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'
+o/Users/edu/Desktop/Keccak/KeccakPermutationReference.c:219: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'
+lSLF07#2@62"Compile /Users/edu/Desktop/Keccak/KeccakPermutationReference.c308698853#308698854#0(415"/Users/edu/Desktop/Keccak/KeccakPermutationReference.c: In function 'displayRoundConstants':/Users/edu/Desktop/Keccak/KeccakPermutationReference.c:218: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'/Users/edu/Desktop/Keccak/KeccakPermutationReference.c:219: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'2(22@91"Format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'308698854#93#161#0(6@54"/Users/edu/Desktop/Keccak/KeccakPermutationReference.c274629600#218#0#218#0#56"format '*' expects type '*', but argument * has type '*'0(22@91"Format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'308698854#254#161#0(6@54"/Users/edu/Desktop/Keccak/KeccakPermutationReference.c274629600#219#0#219#0#56"format '*' expects type '*', but argument * has type '*'0(0#0#54"/Users/edu/Desktop/Keccak/KeccakPermutationReference.c4300911832#1153"    cd /Users/edu/Desktop/Keccak    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-generated-files.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-own-target-headers.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-all-target-headers.hmap -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-project-headers.hmap -F/Users/edu/Desktop/Keccak/build/Debug -I/Users/edu/Desktop/Keccak/build/Debug/include -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources/x86_64 -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources -c /Users/edu/Desktop/Keccak/KeccakPermutationReference.c -o /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakPermutationReference.o0#
+
+CCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakSponge.o /Users/edu/Desktop/Keccak/KeccakSponge.c normal x86_64 c com.apple.compilers.gcc.4_2
+s308698854.196449
+e308698854.270255
+r1
+xCompileC
+xbuild/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakSponge.o
+x/Users/edu/Desktop/Keccak/KeccakSponge.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@48"Compile /Users/edu/Desktop/Keccak/KeccakSponge.c308698854#308698854#0(0"0(0#0#40"/Users/edu/Desktop/Keccak/KeccakSponge.c4300911832#1125"    cd /Users/edu/Desktop/Keccak    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-generated-files.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-own-target-headers.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-all-target-headers.hmap -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-project-headers.hmap -F/Users/edu/Desktop/Keccak/build/Debug -I/Users/edu/Desktop/Keccak/build/Debug/include -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources/x86_64 -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources -c /Users/edu/Desktop/Keccak/KeccakSponge.c -o /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakSponge.o0#
+
+CCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/displayIntermediateValues.o /Users/edu/Desktop/Keccak/displayIntermediateValues.c normal x86_64 c com.apple.compilers.gcc.4_2
+s308698853.626286
+e308698854.241037
+r1
+xCompileC
+xbuild/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/displayIntermediateValues.o
+x/Users/edu/Desktop/Keccak/displayIntermediateValues.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/edu/Desktop/Keccak/displayIntermediateValues.c: In function 'displayStateAsWords':
+o/Users/edu/Desktop/Keccak/displayIntermediateValues.c:75: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'
+o/Users/edu/Desktop/Keccak/displayIntermediateValues.c:76: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'
+o/Users/edu/Desktop/Keccak/displayIntermediateValues.c: In function 'displayText':
+o/Users/edu/Desktop/Keccak/displayIntermediateValues.c:97: warning: format not a string literal and no format arguments
+lSLF07#2@61"Compile /Users/edu/Desktop/Keccak/displayIntermediateValues.c308698853#308698854#0(609"/Users/edu/Desktop/Keccak/displayIntermediateValues.c: In function 'displayStateAsWords':/Users/edu/Desktop/Keccak/displayIntermediateValues.c:75: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'/Users/edu/Desktop/Keccak/displayIntermediateValues.c:76: warning: format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'/Users/edu/Desktop/Keccak/displayIntermediateValues.c: In function 'displayText':/Users/edu/Desktop/Keccak/displayIntermediateValues.c:97: warning: format not a string literal and no format arguments3(22@91"Format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'308698854#90#159#0(6@53"/Users/edu/Desktop/Keccak/displayIntermediateValues.c274629600#75#0#75#0#56"format '*' expects type '*', but argument * has type '*'0(22@91"Format '%08X' expects type 'unsigned int', but argument 3 has type 'long long unsigned int'308698854#249#159#0(6@53"/Users/edu/Desktop/Keccak/displayIntermediateValues.c274629600#76#0#76#0#56"format '*' expects type '*', but argument * has type '*'0(22@51"Format not a string literal and no format arguments308698854#490#119#0(6@53"/Users/edu/Desktop/Keccak/displayIntermediateValues.c274629600#97#0#97#0#51"format not a string literal and no format arguments0(0#0#53"/Users/edu/Desktop/Keccak/displayIntermediateValues.c4300911832#1151"    cd /Users/edu/Desktop/Keccak    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-generated-files.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-own-target-headers.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-all-target-headers.hmap -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-project-headers.hmap -F/Users/edu/Desktop/Keccak/build/Debug -I/Users/edu/Desktop/Keccak/build/Debug/include -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources/x86_64 -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources -c /Users/edu/Desktop/Keccak/displayIntermediateValues.c -o /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/displayIntermediateValues.o0#
+
+CCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/genKAT.o /Users/edu/Desktop/Keccak/genKAT.c normal x86_64 c com.apple.compilers.gcc.4_2
+s308698853.627168
+e308698854.485956
+r1
+xCompileC
+xbuild/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/genKAT.o
+x/Users/edu/Desktop/Keccak/genKAT.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/edu/Desktop/Keccak/genKAT.c: In function 'genMonteCarloSqueezing':
+o/Users/edu/Desktop/Keccak/genKAT.c:403: warning: unused variable 'Temp'
+o/Users/edu/Desktop/Keccak/genKAT.c:403: warning: unused variable 'Msg'
+lSLF07#2@42"Compile /Users/edu/Desktop/Keccak/genKAT.c308698853#308698854#0(217"/Users/edu/Desktop/Keccak/genKAT.c: In function 'genMonteCarloSqueezing':/Users/edu/Desktop/Keccak/genKAT.c:403: warning: unused variable 'Temp'/Users/edu/Desktop/Keccak/genKAT.c:403: warning: unused variable 'Msg'2(22@22"Unused variable 'Temp'308698854#74#72#0(6@34"/Users/edu/Desktop/Keccak/genKAT.c274629600#403#0#403#0#19"unused variable '*'0(22@21"Unused variable 'Msg'308698854#146#71#0(6@34"/Users/edu/Desktop/Keccak/genKAT.c274629600#403#0#403#0#19"unused variable '*'0(0#0#34"/Users/edu/Desktop/Keccak/genKAT.c4300911832#1113"    cd /Users/edu/Desktop/Keccak    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-generated-files.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-own-target-headers.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-all-target-headers.hmap -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-project-headers.hmap -F/Users/edu/Desktop/Keccak/build/Debug -I/Users/edu/Desktop/Keccak/build/Debug/include -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources/x86_64 -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources -c /Users/edu/Desktop/Keccak/genKAT.c -o /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/genKAT.o0#
+
+CCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/main.o /Users/edu/Desktop/Keccak/main.c normal x86_64 c com.apple.compilers.gcc.4_2
+s308698853.549769
+e308698854.196223
+r1
+xCompileC
+xbuild/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/main.o
+x/Users/edu/Desktop/Keccak/main.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@40"Compile /Users/edu/Desktop/Keccak/main.c308698853#308698854#0(0"0(0#0#32"/Users/edu/Desktop/Keccak/main.c8660259774160596992#1109"    cd /Users/edu/Desktop/Keccak    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-generated-files.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-own-target-headers.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-all-target-headers.hmap -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-project-headers.hmap -F/Users/edu/Desktop/Keccak/build/Debug -I/Users/edu/Desktop/Keccak/build/Debug/include -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources/x86_64 -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources -c /Users/edu/Desktop/Keccak/main.c -o /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/main.o0#
+
+CCompileC build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/mainReference.o "/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c" normal x86_64 c com.apple.compilers.gcc.4_2
+s308698854.241225
+e308698854.440600
+r0
+xCompileC
+xbuild/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/mainReference.o
+x/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:14:20: error: malloc.h: No such file or directory
+o/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c: In function 'displayMessageInInternalConvention':
+o/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:77: warning: pointer targets in passing argument 3 of 'displayBits' differ in signedness
+o/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c: In function 'displaySpongeIntermediateValuesOne':
+o/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:88: warning: pointer targets in passing argument 3 of 'displayBytes' differ in signedness
+o/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:94: warning: pointer targets in passing argument 2 of 'Update' differ in signedness
+lSLF07#2@190"Compile /Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c308698854#308698854#0(1513"/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:14:20: error: malloc.h: No such file or directory/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c: In function 'displayMessageInInternalConvention':/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:77: warning: pointer targets in passing argument 3 of 'displayBits' differ in signedness/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c: In function 'displaySpongeIntermediateValuesOne':/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:88: warning: pointer targets in passing argument 3 of 'displayBytes' differ in signedness/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c:94: warning: pointer targets in passing argument 2 of 'Update' differ in signedness4(4@35"Malloc.h: No such file or directory308698854#0#230#0(6@182"/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c274629600#14#0#14#0#28"*: No such file or directory0(22@75"Pointer targets in passing argument 3 of 'displayBits' differ in signedness308698854#461#269#0(6@182"/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c274629600#77#0#77#0#65"pointer targets in passing argument * of '*' differ in signedness0(22@76"Pointer targets in passing argument 3 of 'displayBytes' differ in signedness308698854#961#270#0(6@182"/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c274629600#88#0#88#0#65"pointer targets in passing argument * of '*' differ in signedness0(22@70"Pointer targets in passing argument 2 of 'Update' differ in signedness308698854#1231#264#0(6@182"/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c274629600#94#0#94#0#65"pointer targets in passing argument * of '*' differ in signedness0(0#0#182"/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c4300911832#1270"    cd /Users/edu/Desktop/Keccak    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-generated-files.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-own-target-headers.hmap -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-all-target-headers.hmap -iquote /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Keccak-project-headers.hmap -F/Users/edu/Desktop/Keccak/build/Debug -I/Users/edu/Desktop/Keccak/build/Debug/include -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources/x86_64 -I/Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/DerivedSources -c "/Users/edu/Desktop/Keccak/../../Documents/Dropbox/Poli/5MA/Segurança da Informação - PCS2055/Projetos/projeto 2/Keccak/Arquivo Original/Reference_Implementation/mainReference.c" -o /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/mainReference.o1#
+
+CLd /Users/edu/Desktop/Keccak/build/Debug/Keccak normal x86_64
+r0
+
