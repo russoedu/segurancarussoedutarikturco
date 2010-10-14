@@ -1,0 +1,7 @@
+000000004ac3260600000000000007de 05fc01981a9db674fa70d27ec3517936 ffffffffffffffffffffffffffffffff 24904 /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/genKAT.o
+000000004aae4c600000000000002f72 0062f515113e32903755207731ebd92e ffffffffffffffffffffffffffffffff 0 /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/mainReference.o
+00000000000000000000000000004934 1bbd1ddb8a3ea290da70cdcdeca50047 ffffffffffffffffffffffffffffffff 10832 /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakSponge.o
+000000004b3bfd7d0000000000001cab 81b345b1acbc55785f17215acab61ce1 ffffffffffffffffffffffffffffffff 19080 /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/KeccakPermutationReference.o
+000000004aae4c600000000000000ebe 39c5c73686030739968197b8e1d7b710 ffffffffffffffffffffffffffffffff 8796 /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/displayIntermediateValues.o
+000000000675010700000000000041fd 9c2fc3d361c04d775e37dd7ccdc83ef9 ffffffffffffffffffffffffffffffff 2636 /Users/edu/Desktop/Keccak/build/Keccak.build/Debug/Keccak.build/Objects-normal/x86_64/main.o
+ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff ffffffffffffffffffffffffffffffff 0 /Users/edu/Desktop/Keccak/build/Debug/Keccak
