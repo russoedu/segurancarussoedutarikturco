@@ -54,15 +54,15 @@ public class Util {
 			return (byte) 0x08;
 		else if (sByte.equals("9"))
 			return (byte) 0x09;
-		else if (sByte.equals("a"))
+		else if (sByte.toLowerCase().equals("a"))
 			return (byte) 0x0A;
-		else if (sByte.equals("b"))
+		else if (sByte.toLowerCase().equals("b"))
 			return (byte) 0x0B;
-		else if (sByte.equals("c"))
+		else if (sByte.toLowerCase().equals("c"))
 			return (byte) 0x0C;
-		else if (sByte.equals("d"))
+		else if (sByte.toLowerCase().equals("d"))
 			return (byte) 0x0D;
-		else if (sByte.equals("e"))
+		else if (sByte.toLowerCase().equals("e"))
 			return (byte) 0x0E;
 		else
 			return (byte) 0x0F;
@@ -162,6 +162,24 @@ public class Util {
 		for (int i = 0; i < a.length; i++)
 			output[i] = (byte) (a[i] ^ b[i]);
 
+		return output;
+	}
+	
+	public static byte[] not (byte[] in) {
+		byte[] output = new byte[in.length];
+		
+		for (int i = 0; i < in.length; i++)
+			output[i] = (byte)(in[i] ^ 0xFF);
+		
+		return output;
+	}
+	
+	public static byte[] and (byte[] a, byte[] b) {
+		byte[] output = new byte[a.length];
+		
+		for (int i = 0; i < a.length; i++)
+			output[i] = (byte)(a[i] & b[i]);
+		
 		return output;
 	}
 
