@@ -160,7 +160,12 @@ public class Util {
 		byte[] output = new byte[a.length];
 
 		for (int i = 0; i < a.length; i++)
-			output[i] = (byte) (a[i] ^ b[i]);
+		{
+			if (i < b.length)
+				output[i] = (byte) (a[i] ^ b[i]);
+			else
+				output[i] = a[i];
+		}
 
 		return output;
 	}
