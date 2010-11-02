@@ -10,14 +10,14 @@ public class Printer {
 	}
 	
 	public static void printVector(byte[] b){
-		System.out.printf("|");
+		System.out.printf("| ");
 		for (int i = 0; i < b.length; i++){ 
             System.out.printf("%2s", Util.byteToHex(b[i]));
             if (i < (b.length - 1)){
             	System.out.printf(" ");
             }
 		}
-		System.out.println("|");
+		System.out.println(" |\n");
 	}
 	
 	public static void printVectorAsPlainText(String name, byte[] b){
