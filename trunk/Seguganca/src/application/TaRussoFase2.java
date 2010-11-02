@@ -66,6 +66,8 @@ public class TaRussoFase2 {
 					bitrateInput();
 					diversifierInput();
 					printInstructions();
+					k.setBitRate(bitrate);
+					k.setDiversifier(diversifier);
 					break;
 				//Selecionar um arquivo para calcular seu resumo Keccak
 				case 2:

@@ -27,10 +27,21 @@ public class Keccak implements HashFunction, Duplex {
 			s = keccakf(s);
 		}
 		
-		val = new byte[r/8];
+		val = new byte[c/16];
+		byte[] z = new byte[0];
 		
-		for (int i = 0; i < r/8; i++)
-			val[i] = s[i];
+		while (z.length < c/16)
+		{
+			byte[] aux = new byte[r/8];
+			for (int i = 0; i < r/8; i++)
+				aux[i] = s[i];
+			
+			z = Util.concat(z, aux);
+			s = keccakf(s);
+		}
+		
+		for (int i = 0; i < c/16; i++)
+			val[i] = z[i];
 		
 		return val;
 	}

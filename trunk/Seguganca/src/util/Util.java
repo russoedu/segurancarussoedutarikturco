@@ -232,4 +232,16 @@ public class Util {
 
 		return rightPaddedMessage;
 	}
+	
+	public static byte[] concat (byte[] a, byte[] b)
+	{
+		byte[] output = new byte[a.length + b.length];
+		
+		for (int i = 0; i < a.length; i++)
+			output[i] = a[i];
+		for (int i = a.length; i < a.length + b.length; i++)
+			output[i] = b[i - a.length];
+		
+		return output;
+	}
 }
