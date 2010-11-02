@@ -8,6 +8,11 @@ public class SpongePRNG implements SpongeRandom{
 	Keccak keccak;
 	int rho;
 
+	public SpongePRNG(Keccak k)
+	{
+		keccak = k;
+	}
+	
 	@Override
 	public void feed(byte[] sigma, int sigmaLength) {
 		
@@ -78,7 +83,6 @@ public class SpongePRNG implements SpongeRandom{
 
 	@Override
 	public void init(int hashBits) {
-		keccak = new Keccak();
 		keccak.init(hashBits);
 		bin = new byte[0];
 		bout = new byte[0];

@@ -8,21 +8,6 @@ import interfaces.Duplex;
 import interfaces.HashFunction;
 
 public class Keccak implements HashFunction, Duplex {
-
-	public static void main(String[] args)
-	{
-		SpongePRNG sponge = new SpongePRNG();
-
-		String message = "7A";
-		byte[] byteArray = Util.convertStringToVector(message);
-		sponge.init(0);
-		sponge.feed(byteArray, byteArray.length);
-		
-		//k.update(byteArray, byteArray.length);
-		//byte[] result = k.getHash(new byte[0]);
-		
-		
-	}
 	
 	int ntotalbits = 1600;
 	int r = 1024;
@@ -46,7 +31,6 @@ public class Keccak implements HashFunction, Duplex {
 		
 		for (int i = 0; i < r/8; i++)
 			val[i] = s[i];
-		System.out.println(Util.byteToHex(s));
 		
 		return val;
 	}
@@ -87,8 +71,6 @@ public class Keccak implements HashFunction, Duplex {
 		for (int i = 0; i < zLength; i++)
 			z[i] = state[i];
 		
-		System.out.println(Util.byteToHex(state));
-		
 		return z;
 	}
 
@@ -100,6 +82,17 @@ public class Keccak implements HashFunction, Duplex {
 	@Override
 	public int getCapacity() {
 		return c;
+	}
+	
+	public void setBitRate(int bitrate)
+	{
+		r = bitrate;
+		c = 1600 - r;
+	}
+	
+	public void setDiversifier(int diversifier)
+	{
+		d = diversifier;
 	}
 
 	
