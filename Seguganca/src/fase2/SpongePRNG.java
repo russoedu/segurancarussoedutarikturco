@@ -1,4 +1,5 @@
 package fase2;
+import util.Util;
 import interfaces.SpongeRandom;
 
 public class SpongePRNG implements SpongeRandom{
@@ -16,7 +17,7 @@ public class SpongePRNG implements SpongeRandom{
 	@Override
 	public void feed(byte[] sigma, int sigmaLength) {
 		
-		byte[] aux = concat(bin, sigma);
+		byte[] aux = Util.concat(bin, sigma);
 		
 		byte[][] M = new byte[aux.length/rho + 1][];
 		
@@ -27,7 +28,7 @@ public class SpongePRNG implements SpongeRandom{
 				M[i][j] = aux[i*rho + j];
 		}
 		
-		for (int i = 0; i < M.length; i++)
+		for (int i = 0; i < M.length - 1; i++)
 		{
 			keccak.duplexing(M[i], M[i].length, new byte[0], 0);
 		}
@@ -41,7 +42,7 @@ public class SpongePRNG implements SpongeRandom{
 		
 		while (bout.length < zLength)
 		{
-			bout = concat(bout, keccak.duplexing(bin, bin.length, new byte[keccak.getBitRate()/8 - 1], keccak.getBitRate()/8 - 1));
+			bout = Util.concat(bout, keccak.duplexing(bin, bin.length, new byte[keccak.getBitRate()/8 - 1], keccak.getBitRate()/8 - 1));
 			bin = new byte[0];
 		}
 		
@@ -88,18 +89,6 @@ public class SpongePRNG implements SpongeRandom{
 		bout = new byte[0];
 		rho = keccak.getBitRate()/8 - 1;
 		
-	}
-	
-	byte[] concat (byte[] a, byte[] b)
-	{
-		byte[] output = new byte[a.length + b.length];
-		
-		for (int i = 0; i < a.length; i++)
-			output[i] = a[i];
-		for (int i = a.length; i < a.length + b.length; i++)
-			output[i] = b[i - a.length];
-		
-		return output;
 	}
 
 }
