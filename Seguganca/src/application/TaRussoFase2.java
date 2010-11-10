@@ -53,6 +53,7 @@ public class TaRussoFase2 {
 	private static void mainMenu(){
 		k.setBitRate(bitrate);
 		k.setDiversifier(diversifier);
+		spongePRNG.init(0);
 		
 		boolean validValue = false;
 		int key;
@@ -87,15 +88,20 @@ public class TaRussoFase2 {
 				case 3:
 					
 					byte[] seed = readDocument("Indique o caminho do arquivo contendo a semente de entropia: ");
-					randomNumberLengthInput();
 					
-					spongePRNG.init(randomNumberLength);
 					spongePRNG.feed(seed, seed.length);
+					
+					printInstructions();
+					
+					break;
+				case 4:
+					randomNumberLengthInput();
 					
 					byte[] random = spongePRNG.fetch(new byte[randomNumberLength], randomNumberLength);
 					
 					System.out.println("Numero pseudo-aleatorio gerado:");
 					Printer.printVector(random);
+					
 					printInstructions();
 					
 					break;
@@ -120,7 +126,8 @@ public class TaRussoFase2 {
 		String instructions = "Por favor, escolha uma das opcoes abaixo:\n" +
 		"[1] Escolher os parametros de Keccak (Default: r = 1024, c = 576 e d = 0)\n" +
 		"[2] Selecionar um arquivo para calcular seu resumo Keccak\n" +
-		"[3] Selecionar um arquivo com uma semente de entropia e calcular um numero pseudo-aleatorio SpongePRNG\n" +
+		"[3] Selecionar um arquivo com uma semente de entropia\n" +
+		"[4] Calcular bytes pseudo aleatorios SpongePRNG\n" +
 		"[0] Finalizar programa\n" +
 		"[r | " + bitrate + "] [c | " + (1600 - bitrate) + "] [d | " + diversifier + "]\n" +
 		"Opcao: ";

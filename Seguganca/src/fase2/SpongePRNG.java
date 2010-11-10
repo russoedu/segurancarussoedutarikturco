@@ -42,7 +42,7 @@ public class SpongePRNG implements SpongeRandom{
 		
 		while (bout.length < zLength)
 		{
-			bout = Util.concat(bout, keccak.duplexing(bin, bin.length, new byte[keccak.getBitRate()/8 - 1], keccak.getBitRate()/8 - 1));
+			bout = Util.concat(bout, keccak.duplexing(bin, bin.length, new byte[keccak.getBitRate()/8], keccak.getBitRate()/8));
 			bin = new byte[0];
 		}
 		
@@ -60,11 +60,11 @@ public class SpongePRNG implements SpongeRandom{
 	@Override
 	public void forget() {
 		
-		byte[] z = keccak.duplexing(bin, bin.length, new byte[rho], rho);
+		byte[] z = keccak.duplexing(bin, bin.length, new byte[keccak.getBitRate()], keccak.getBitRate());
 		bin = new byte[0];
 		
 		for (int i = 0; i < keccak.getCapacity()/keccak.getBitRate(); i++)
-			z = keccak.duplexing(z, z.length, new byte[rho], rho);
+			z = keccak.duplexing(z, z.length, new byte[keccak.getBitRate()], keccak.getBitRate());
 		
 		bout = new byte[0];
 		
