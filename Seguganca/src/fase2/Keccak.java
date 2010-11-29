@@ -48,8 +48,7 @@ public class Keccak implements HashFunction, Duplex {
 
 	@Override
 	public void init(int hashBits) {
-		// TODO Auto-generated method stub
-		
+		state = new byte[1600/8];
 	}
 
 	@Override
