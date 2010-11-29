@@ -33,7 +33,7 @@ public class CramerShoup implements KeyEncapsulation {
 		// c, d, h
 		BigInteger[] retorno = new BigInteger[3];
 
-		sr.init(hashBits/8);
+		sr.init(hashBits);
 		sr.feed(passwd.getBytes(), passwd.length());
 
 		BigInteger x1 = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
@@ -57,7 +57,7 @@ public class CramerShoup implements KeyEncapsulation {
 		
 		byte[] seed = SecureRandom.getSeed(32);
 		
-		sr.init(0);
+		sr.init(hashBits);
 		sr.feed(seed, seed.length);
 		
 		BigInteger r = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
@@ -70,7 +70,7 @@ public class CramerShoup implements KeyEncapsulation {
 		retorno[2] = pk[2].modPow(r, p).multiply(toBigIntegerModP(m)).mod(p);
 		
 		byte[] data = toByteArray(retorno[0], retorno[1], retorno[2]);
-		H.init(0);
+		H.init(hashBits);
 		H.update(data, data.length);
 		BigInteger alfa = toBigIntegerModQ(H.getHash(new byte[hashBits/8]));
 		
@@ -83,13 +83,13 @@ public class CramerShoup implements KeyEncapsulation {
 	@Override
 	public byte[] decrypt(String passwd, BigInteger[] cs) {
 		
-		H.init(hashBits/8);
+		H.init(hashBits);
 		byte[] data = toByteArray(cs[0], cs[1], cs[2]);
 		H.update(data, data.length);
 		
 		BigInteger alfa = toBigIntegerModQ(H.getHash(new byte[hashBits/8]));
 		
-		sr.init(hashBits/8);
+		sr.init(hashBits);
 		sr.feed(passwd.getBytes(), passwd.length());
 
 		BigInteger x1 = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
