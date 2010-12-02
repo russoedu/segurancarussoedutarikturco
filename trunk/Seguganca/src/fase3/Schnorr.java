@@ -32,6 +32,7 @@ public class Schnorr implements DigitalSignature {
 	public BigInteger makeKeyPair(String passwd) {
 
 		sr.init(hashBits);
+		sr.feed("Schorr".getBytes(), "Schorr".length());
 		sr.feed(passwd.getBytes(), passwd.length());
 		
 		BigInteger x = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
@@ -54,6 +55,7 @@ public class Schnorr implements DigitalSignature {
 	public BigInteger[] sign(String passwd) {
 
 		sr.init(hashBits);
+		sr.feed("Schorr".getBytes(), "Schorr".length());
 		sr.feed(passwd.getBytes(), passwd.length());
 		BigInteger x = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
 		
