@@ -3,6 +3,8 @@ package fase3;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import util.Util;
+
 import interfaces.DigitalSignature;
 import interfaces.HashFunction;
 import interfaces.SpongeRandom;
@@ -15,6 +17,7 @@ public class Schnorr implements DigitalSignature {
 	HashFunction H;
 	SpongeRandom sr;
 	int hashBits = 512;
+	byte[] M = new byte[0];
 
 	@Override
 	public void setup(BigInteger p, BigInteger q, BigInteger g, HashFunction H,
@@ -32,7 +35,7 @@ public class Schnorr implements DigitalSignature {
 	public BigInteger makeKeyPair(String passwd) {
 
 		sr.init(hashBits);
-		sr.feed("Schorr".getBytes(), "Schorr".length());
+		sr.feed("Schnorr".getBytes(), "Schnorr".length());
 		sr.feed(passwd.getBytes(), passwd.length());
 		
 		BigInteger x = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
@@ -48,14 +51,14 @@ public class Schnorr implements DigitalSignature {
 
 	@Override
 	public void update(byte[] aData, int aLength) {
-		H.update(aData, aLength);
+		M = Util.concat(M, aData);
 	}
 
 	@Override
 	public BigInteger[] sign(String passwd) {
 
 		sr.init(hashBits);
-		sr.feed("Schorr".getBytes(), "Schorr".length());
+		sr.feed("Schnorr".getBytes(), "Schnorr".length());
 		sr.feed(passwd.getBytes(), passwd.length());
 		BigInteger x = toBigIntegerModQ(sr.fetch(new byte[hashBits/8], hashBits/8));
 		
@@ -70,10 +73,11 @@ public class Schnorr implements DigitalSignature {
 		BigInteger[] retorno = new BigInteger[2];
 		
 		byte[] R = r.toByteArray();
-		H.update(R, R.length);
+		update(R, R.length);
+		H.update(M, M.length);
 		retorno[0] = toBigIntegerModQ(H.getHash(new byte[hashBits/8]));
 		
-		retorno[1] = k.subtract(x.multiply(retorno[0]).mod(q)).mod(p);
+		retorno[1] = k.subtract(x.multiply(retorno[0]).mod(q)).mod(q);
 		
 		return retorno;
 	}
@@ -84,7 +88,10 @@ public class Schnorr implements DigitalSignature {
 		BigInteger m = g.modPow(sig[1], p).multiply(y.modPow(sig[0], p)).mod(p);
         
 		byte[] M = m.toByteArray();
-        H.update(M, M.length);
+		
+		update(M, M.length);
+		
+        H.update(this.M, this.M.length);
         BigInteger e = toBigIntegerModQ(H.getHash(new byte[hashBits/8]));
 		
 		return sig[0].compareTo(e) == 0;
