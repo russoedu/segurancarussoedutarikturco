@@ -323,6 +323,9 @@ public class TaRussoFase3 {
                                 // Select a file and its digital signature to verify.
                                 case 6: {
                                         // Gets the file to be verified.
+                                	
+                                		init();
+                                	
                                         String[] filePath = new String[1];
                                         byte[] document = readDocument("Enter the file to be signed: ", filePath);
                                 
